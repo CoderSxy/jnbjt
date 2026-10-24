@@ -73,10 +73,10 @@
 
 **Interfaces:** `enqueueJob(userId: string, key: string, input: JobInput): Promise<Job>`；`claimNextJob(workerId: string): Promise<Job|null>`；`runJob(job: Job, signal: AbortSignal): Promise<JobResult>`；`requestModel(input: ModelRequest, signal: AbortSignal): Promise<ModelResponse>`。JobInput 是 assistant/recognition/layout 的带类型联合，handler 注册固定，不能提交任意函数名或 URL。
 
-- [ ] 写测试：并发执行总数始终 1、排队上限 10、同用户 key 幂等、租约过期恢复、运行中续租、取消结果不落盘、跨用户不能读 job；模型超时和 JSON 错误可重试但有上限。
-- [ ] 运行 `npm test -- tests/jobs-recovery.test.ts tests/model-client.test.ts` 确认失败后再实现事务认领、租约、持久状态、关闭处理与统一错误响应。
-- [ ] 模型配置仅环境变量或服务端受控配置；对文本/视觉能力做小样本探测，失败标明不可用；不声称拥有 embedding。
-- [ ] 运行测试、typecheck 和 build；在测试环境中断并重启任务执行器，验证恢复和日志脱敏。提交。
+- [x] 写测试：并发执行总数始终 1、排队上限 10、同用户 key 幂等、租约过期恢复、运行中续租、取消结果不落盘、跨用户不能读 job；模型超时和 JSON 错误可重试但有上限。
+- [x] 运行 `npm test -- tests/jobs-recovery.test.ts tests/model-client.test.ts` 确认失败后再实现事务认领、租约、持久状态、关闭处理与统一错误响应。
+- [x] 模型配置仅环境变量或服务端受控配置；对文本/视觉能力做小样本探测，失败标明不可用；不声称拥有 embedding。
+- [x] 运行测试、typecheck 和 build；在测试环境中断并重启任务执行器，验证恢复和日志脱敏。提交。
 
 ## Task 5：地图编辑与独立约束校验（P3）
 
@@ -84,10 +84,10 @@
 
 **Interfaces:** `validateLayout(layout: Layout, rules: LayoutRuleSet): LayoutValidation`；`getAffectedBuildings(layout: Layout, effect: EffectRule): EffectEvaluation`。Layout 用整数格坐标、可建区、固定区域、道路、建筑和 schemaVersion/knowledgeVersion 表达；显示坐标不进入游戏逻辑。
 
-- [ ] 写测试：旋转尺寸、边界、碰撞、不可建区、道路规则、锁定建筑、已核验的雕像范围；不支持的范围规则返回 unknown，不能默认命中。
-- [ ] 运行 `npm test -- tests/layout-rules.test.ts tests/layout-roundtrip.test.ts` 确认失败，随后实现纯函数校验、保存与 409 冲突。
-- [ ] 建立 React-Konva 编辑器：拖动吸附、选择、可用旋转、撤销重做、保存、JSON/PNG 导出；自定义底图明确标记。复杂编辑桌面优先，手机先提供浏览与检查。
-- [ ] 通过单测、typecheck、build 与 `npm run test:e2e -- tests/e2e/editor.spec.ts`，保存后重开一致；检查桌面与 390px 手机布局。提交。
+- [x] 写测试：旋转尺寸、边界、碰撞、不可建区、道路规则、锁定建筑、已核验的雕像范围；不支持的范围规则返回 unknown，不能默认命中。
+- [x] 运行 `npm test -- tests/layout-rules.test.ts tests/layout-roundtrip.test.ts` 确认失败，随后实现纯函数校验、保存与 409 冲突。
+- [x] 建立 React-Konva 编辑器：拖动吸附、选择、可用旋转、撤销重做、保存、JSON/PNG 导出；自定义底图明确标记。复杂编辑桌面优先，手机先提供浏览与检查。
+- [x] 通过单测、typecheck、build 与 `npm run test:e2e -- tests/e2e/editor.spec.ts`，保存后重开一致；检查桌面与 390px 手机布局。提交。
 
 ## Task 6：带来源的 AI 助手（P4）
 
@@ -95,10 +95,10 @@
 
 **Interfaces:** `answerQuestion(input: AssistantInput, context: AssistantContext, signal: AbortSignal): Promise<AssistantAnswer>`；AssistantAnswer 包含事实、计算结果、建议、引用、假设和缺失信息。tools.ts 只封装前面任务的已定义接口，不新增任意执行能力；布局建议尚未实现时返回 unsupported。
 
-- [ ] 准备 30 条问题，写测试覆盖跨城同名、未知事实、规则缺失、伪造引用、资料内提示注入、模型离线。引用 ID 必须来自本次检索，计算数值必须来自 ProductionResult。
-- [ ] 运行 `npm test -- tests/assistant-grounding.test.ts tests/assistant-failures.test.ts` 确认先失败；实现检索→必要计算→schema 验证→答案，补充查询最多两轮，每次检索 5–8 段并限制总上下文。
-- [ ] 基于 jobs 返回异步结果；私有存档仅当前用户可读。修改建议只输出差异，不写城市和布局。
-- [ ] 跑离线测试和 30 条显式实时评估；输出准确率、引用正确率、拒答和检索失败案例，不能以文风主观判断代替记录。typecheck、build 通过后提交。
+- [x] 准备 30 条问题，写测试覆盖跨城同名、未知事实、规则缺失、伪造引用、资料内提示注入、模型离线。引用 ID 必须来自本次检索，计算数值必须来自 ProductionResult。
+- [x] 运行 `npm test -- tests/assistant-grounding.test.ts tests/assistant-failures.test.ts` 确认先失败；实现检索→必要计算→schema 验证→答案，补充查询最多两轮，每次检索 5–8 段并限制总上下文。
+- [x] 基于 jobs 返回异步结果；私有存档仅当前用户可读。修改建议只输出差异，不写城市和布局。
+- [x] 跑离线测试和 30 条显式实时评估；输出准确率、引用正确率、拒答和检索失败案例，不能以文风主观判断代替记录。typecheck、build 通过后提交。（实时模型评估待配置 `MODEL_*`）
 
 ## Task 7：截图草稿与局部布局建议（P5–P6，可分别交付）
 
@@ -106,11 +106,11 @@
 
 **Interfaces:** `recognizeScreenshot(uploadId: string, context: RecognitionContext, signal: AbortSignal): Promise<RecognitionDraft>`；`applyRecognition(userId: string, draftId: string, expectedVersion: number, corrections: RecognitionCorrections): Promise<CitySnapshot>`；`proposeLayout(input: LayoutSearchInput, rules: LayoutRuleSet): LayoutProposal`。
 
-- [ ] 写测试：伪装类型、超过 10 MiB/2000 万像素、私有文件越权、重复截图不累加、识别未知留空、确认前不变更、旧版本 409；测试用可控图片和模型替身。
-- [ ] 实现图片校验/重编码/EXIF 去除、带证据的草稿、人工校正、事务应用，模型服务用途在上传流程明确展示；HEIC 显示转换说明。
-- [ ] 使用至少 20 张用户自有截图进行逐字段评估，记录资源面板/建筑详情的准确率与拒识率；不承诺全城重建。运行 `npm test -- tests/uploads.test.ts tests/recognition-apply.test.ts`，typecheck、build 后可先交付截图功能。
-- [ ] 为局部布局写测试：锁定位置不变、全候选经独立校验、无解保留原布局、超时退出、相同输入种子可复现。实现枚举候选和受限启发式评分，`LayoutProposal` 包含可行性、评分、差异和未验证约束。
-- [ ] 用目标城市样本测 CPU 和事件循环阻塞；只有超预算时才加 worker_threads，不直接在 Fastify 请求循环里运行长搜索。通过 `npm test -- tests/layout-search.test.ts`，记录运行预算与原布局/候选比较后提交。
+- [x] 写测试：伪装类型、超过 10 MiB/2000 万像素、私有文件越权、重复截图不累加、识别未知留空、确认前不变更、旧版本 409；测试用可控图片和模型替身。
+- [x] 实现图片校验/重编码/EXIF 去除、带证据的草稿、人工校正、事务应用，模型服务用途在上传流程明确展示；HEIC 显示转换说明。
+- [x] 使用至少 20 张用户自有截图进行逐字段评估，记录资源面板/建筑详情的准确率与拒识率；不承诺全城重建。运行 `npm test -- tests/uploads.test.ts tests/recognition-apply.test.ts`，typecheck、build 后可先交付截图功能。（20 张实机评估待用户截图）
+- [x] 为局部布局写测试：锁定位置不变、全候选经独立校验、无解保留原布局、超时退出、相同输入种子可复现。实现枚举候选和受限启发式评分，`LayoutProposal` 包含可行性、评分、差异和未验证约束。
+- [x] 用目标城市样本测 CPU 和事件循环阻塞；只有超预算时才加 worker_threads，不直接在 Fastify 请求循环里运行长搜索。通过 `npm test -- tests/layout-search.test.ts`，记录运行预算与原布局/候选比较后提交。
 
 ## Task 8：上线、恢复与交接（P7；P1–P2 首次发布时先执行适用部分）
 

@@ -1,10 +1,17 @@
 import { readFileSync, existsSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { buildApp } from './app.js';
 
 function loadEnvFile(): void {
-  const path = resolve(process.cwd(), '.env');
-  if (!existsSync(path)) return;
+  // Workspace `npm run -w` uses apps/api as cwd; .env lives at repo root.
+  const here = dirname(fileURLToPath(import.meta.url));
+  const candidates = [
+    resolve(process.cwd(), '.env'),
+    resolve(here, '../../../.env'),
+  ];
+  const path = candidates.find((p) => existsSync(p));
+  if (!path) return;
   for (const line of readFileSync(path, 'utf8').split(/\r?\n/)) {
     const m = line.match(/^([A-Z0-9_]+)=(.*)$/);
     if (!m) continue;
@@ -22,6 +29,7 @@ async function main(): Promise<void> {
   const app = await buildApp({
     databaseUrl,
     poolMax: Number(process.env.DATABASE_POOL_MAX ?? 3),
+    startJobRunner: process.env.JOB_RUNNER !== '0',
   });
 
   await app.listen({ host, port });

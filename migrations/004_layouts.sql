@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS layouts (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  city_id TEXT NOT NULL REFERENCES player_cities(id) ON DELETE CASCADE,
+  version INTEGER NOT NULL DEFAULT 1,
+  layout JSONB NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (user_id, city_id)
+);

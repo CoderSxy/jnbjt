@@ -12,6 +12,7 @@
   ],
   "scripts": {
     "test": "vitest run",
+    "test:e2e": "vitest run tests/e2e",
     "test:watch": "vitest",
     "typecheck": "tsc -b --pretty false",
     "build": "npm run typecheck && npm run build -w @jnbjt/web --if-present",

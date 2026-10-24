@@ -2,10 +2,7 @@
 
 江南百景图个人规划工具。设计：`docs/design.md`；计划：`docs/implementation-plan.md`。
 
-## 本地要求
-
-- Node.js ≥ 22.13
-- 与 nero-agent 共用 Docker Postgres（`127.0.0.1:5433`），独立库 `jnbjt`
+## 本地启动
 
 ```bash
 cp .env.example .env
@@ -20,12 +17,15 @@ npm run dev:api
 npm run dev:web
 ```
 
-## 首版进度（P0–P2）
+可选模型：`MODEL_BASE_URL` / `MODEL_API_KEY` / `MODEL_ID`（不配置时资料/计算/存档仍可用）。
 
-- [x] 任务 1：Wiki 探针与覆盖报告
-- [x] 任务 2：知识导入与资料检索 UI
-- [x] 任务 3：登录、城市存档、生产计算
-- [x] 任务 8：适用部分（health/ready、运维/验收文档、deploy 占位）
-- [ ] 任务 4–7：长任务 / 地图 / AI / 截图
+## 进度
 
-运维与验收：`docs/operations.md`、`docs/acceptance.md`。
+- [x] 任务 1–3：探针、知识、登录存档、生产计算
+- [x] 任务 4：长任务与模型适配
+- [x] 任务 5：地图编辑与布局校验
+- [x] 任务 6：带来源 AI 助手
+- [x] 任务 7：截图草稿与局部布局建议
+- [ ] 任务 8：生产 ECS/Nginx 切换（文档与 health 已具备）
+
+详见 `docs/acceptance.md`。

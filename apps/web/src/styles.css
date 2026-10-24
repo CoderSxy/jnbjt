@@ -86,6 +86,38 @@ pre.recipe {
   white-space: pre-wrap;
 }
 
+.editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.editor-grid {
+  display: grid;
+  grid-template-columns: 140px 1fr 180px;
+  gap: 0.75rem;
+  align-items: start;
+}
+
+.palette,
+.inspector {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.stage {
+  border: 1px solid var(--line);
+  max-width: 100%;
+  overflow: auto;
+}
+
+@media (max-width: 900px) {
+  .editor-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .panel {
   background: color-mix(in srgb, var(--paper) 88%, white);
   border: 1px solid var(--line);
