@@ -1,0 +1,157 @@
+tests/helpers/db.ts
+  s_1e859217a46b21::t_62bf6443ce1e70 23-24,51-61,63-72
+README.md
+  s_1e859217a46b21::t_f786ae5e61bb0c 5,20-22,24-29,31
+apps/api/src/modules/imports/recognize.ts
+  s_1e859217a46b21::t_dc7d6462b48b22 1-58
+apps/web/src/features/editor/history.ts
+  s_1e859217a46b21::t_2acb0d3b75b4a5 1-37
+packages/domain/src/index.ts
+  s_1e859217a46b21::t_e92a057d3bf40b 3-12,16
+  s_1e859217a46b21::t_daffa523df8c81 13-15
+packages/domain/src/layout-search.ts
+  s_1e859217a46b21::t_e3ffa46c8ab1d1 1-127
+apps/api/src/modules/imports/routes.ts
+  s_1e859217a46b21::t_3a1bc42555e606 140-142
+  s_1e859217a46b21::t_a8193fe53692a0 1-99,101-105,107-139,143-146
+  s_1e859217a46b21::t_b0a825199c0ce9 100,106
+docs/implementation-plan.md
+  s_1e859217a46b21::t_36a402f859bd81 87-90
+  s_1e859217a46b21::t_3312919984ad38 98-101
+  s_1e859217a46b21::t_b3e4dc40acf9c8 109-113
+  s_1e859217a46b21::t_a081867cf4d0a3 76-79
+.env.example
+  s_1e859217a46b21::t_84e11abcbb6dff 11-14
+apps/web/src/styles.css
+  s_1e859217a46b21::t_e569a6d502371a 89-120
+tests/jobs-recovery.test.ts
+  s_1e859217a46b21::t_25aaea266fa4cc 1-117
+apps/api/src/modules/ai/citations.ts
+  s_1e859217a46b21::t_54bf678ac06eb6 1-20
+packages/contracts/src/index.ts
+  s_1e859217a46b21::t_c40b5fc357748d 6,10
+  s_1e859217a46b21::t_0458a26d63e1cf 4-5
+  s_1e859217a46b21::t_c3d052d834988c 7-9
+apps/api/src/modules/ai/assistant.ts
+  s_1e859217a46b21::t_fecd642f811a1e 41-44
+  s_1e859217a46b21::t_804ab242863fcb 169-172
+  s_1e859217a46b21::t_46ff2418829f31 1-40,45-61,63-168,173-188
+  s_1e859217a46b21::t_86c87e1628d79a 62
+apps/web/src/features/assistant/AssistantPage.tsx
+  s_1e859217a46b21::t_25fa9f57ce6789 1-81
+tests/e2e/editor.spec.ts
+  s_1e859217a46b21::t_4b36f92f0d97ec 1-18
+packages/domain/src/grid.ts
+  s_1e859217a46b21::t_2683fbb9f3a822 1-39
+tests/uploads.test.ts
+  s_1e859217a46b21::t_69de46315cfce3 1-23
+apps/api/src/modules/imports/apply.ts
+  s_1e859217a46b21::t_eba0b4a9ed3cc9 1-53
+migrations/004_layouts.sql
+  s_1e859217a46b21::t_0422a572405951 1-9
+apps/web/src/features/assistant/AnswerSources.tsx
+  s_1e859217a46b21::t_64863f0e1cbcd8 1-26
+package.json
+  s_1e859217a46b21::t_d505a203bfbe57 15
+apps/api/src/modules/jobs/runner.ts
+  s_1e859217a46b21::t_95fed59ef55914 1-93
+apps/web/src/features/editor/BuildingPalette.tsx
+  s_1e859217a46b21::t_8d6d9181e99b7a 1-21
+apps/api/src/modules/layouts/propose.ts
+  s_1e859217a46b21::t_c902e4d4763499 1-6
+apps/api/src/plugins/uploads.ts
+  s_1e859217a46b21::t_19e8995dca7f02 1-110
+packages/domain/src/layout-validation.ts
+  s_1e859217a46b21::t_f30009d7c7b29a 1-94
+apps/api/src/modules/ai/tools.ts
+  s_1e859217a46b21::t_dc535d078d9ffe 1-43
+tests/recognition-apply.test.ts
+  s_1e859217a46b21::t_ae776c26690fad 1-144
+apps/api/src/modules/layouts/routes.ts
+  s_1e859217a46b21::t_622812451ee6af 1-73
+migrations/003_jobs.sql
+  s_1e859217a46b21::t_59131d16437e08 1-19
+apps/api/src/modules/ai/assistant-routes.ts
+  s_1e859217a46b21::t_ee513ef89a4e5c 55
+  s_1e859217a46b21::t_f3be52306d968c 1-54,56-59
+tests/assistant-grounding.test.ts
+  s_1e859217a46b21::t_9a038df9c7c317 1-93,95-103
+  s_1e859217a46b21::t_3ba968a9eaed82 94
+docs/acceptance.md
+  s_1e859217a46b21::t_78fa0902584f7e 1,3,7-12,16-19,23-25
+packages/domain/src/effects.ts
+  s_1e859217a46b21::t_b9f67ad6298ae1 1-34
+apps/api/src/modules/jobs/repository.ts
+  s_1e859217a46b21::t_d1adf767386404 1-244
+apps/api/src/modules/ai/capabilities.ts
+  s_1e859217a46b21::t_3ff0155ec5fd0b 1-14
+apps/web/src/features/editor/LayoutInspector.tsx
+  s_1e859217a46b21::t_e2d520b199fed4 1-38
+apps/web/src/App.tsx
+  s_1e859217a46b21::t_8b06b856cce886 6-9,22-24,35-38
+tests/assistant-failures.test.ts
+  s_1e859217a46b21::t_d5c0b843709b34 1-28
+apps/api/src/modules/jobs/routes.ts
+  s_1e859217a46b21::t_854b0020d02dcb 1-61
+apps/api/src/app.ts
+  s_1e859217a46b21::t_c1d9ef47d906c1 8-10,21,47-50,56,60-72
+  s_1e859217a46b21::t_0455ff4f1f264d 12-16,36,58-59
+  s_1e859217a46b21::t_720c195f4652f6 11
+  s_1e859217a46b21::t_ae5a38a9e78850 57
+packages/contracts/src/assistant.ts
+  s_1e859217a46b21::t_22c3a1727192d0 1-27
+tests/fixtures/assistant/questions.json
+  s_1e859217a46b21::t_fd1ac5671600b0 1-32
+apps/web/src/features/imports/RecognitionReview.tsx
+  s_1e859217a46b21::t_de8948a143805b 1-58
+packages/contracts/src/layout.ts
+  s_1e859217a46b21::t_e055a77ddb626d 1-81
+apps/api/src/modules/ai/client.ts
+  s_1e859217a46b21::t_082560cb7da1b6 1-28,31-36,39-212
+  s_1e859217a46b21::t_a4f6606e3abfd6 29-30,37-38
+tests/model-client.test.ts
+  s_1e859217a46b21::t_e92e2d6f9f6d13 1-70
+apps/web/src/features/editor/MapEditor.tsx
+  s_1e859217a46b21::t_eeb08a37ef48d0 1-220
+packages/contracts/src/model.ts
+  s_1e859217a46b21::t_b15bc446442a74 1-44
+apps/web/src/features/imports/UploadPage.tsx
+  s_1e859217a46b21::t_125c5205768ab0 1-67
+packages/contracts/src/recognition.ts
+  s_1e859217a46b21::t_080be083c3e9f7 1-41
+apps/api/src/modules/layouts/repository.ts
+  s_1e859217a46b21::t_83d2fbf6586072 1-67
+migrations/005_uploads_drafts.sql
+  s_1e859217a46b21::t_22bcff4d7e18a6 1-23
+tests/layout-search.test.ts
+  s_1e859217a46b21::t_c8c46ca8b8ec08 1-77
+apps/api/src/server.ts
+  s_1e859217a46b21::t_5bbe5d473b1022 32
+  s_1e859217a46b21::t_66e14070e33998 2-3,7-14
+tests/layout-roundtrip.test.ts
+  s_1e859217a46b21::t_20c45a7a2186bd 1-97
+tests/layout-rules.test.ts
+  s_1e859217a46b21::t_79e77bc364c01f 1-65
+packages/contracts/src/jobs.ts
+  s_1e859217a46b21::t_b7eb0ed64a8f17 1-70
+apps/web/package.json
+  s_1e859217a46b21::t_ca7117367aff09 14,17
+package-lock.json
+  s_1e859217a46b21::t_3b7233bf3825f6 51,54,2134-2142,3011-3031,3090-3121,3551-3596
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "936dde307eb42b37bf0604e112cf68e6cf65bc12",
+  "prompts": {},
+  "sessions": {
+    "s_1e859217a46b21": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "1f0a193f-0084-41d5-9d7f-e7eaed0021d1",
+        "model": "default"
+      },
+      "human_author": "sxy <545231960@qq.com>"
+    }
+  }
+}
