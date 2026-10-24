@@ -1,0 +1,19 @@
+.gitignore
+  s_1e859217a46b21::t_889d9a6f5c2933 11-13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f82a29f5e4aa9419e07f669023b138bf10525b52",
+  "prompts": {},
+  "sessions": {
+    "s_1e859217a46b21": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "1f0a193f-0084-41d5-9d7f-e7eaed0021d1",
+        "model": "default"
+      },
+      "human_author": "sxy <545231960@qq.com>"
+    }
+  }
+}
