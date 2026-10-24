@@ -1,0 +1,16 @@
+docs/superpowers/plans/2026-10-24-jnbjt-platform.md
+  h_d083fb1648bfd3 1-133
+docs/superpowers/specs/2026-10-24-jnbjt-platform-design.md
+  h_d083fb1648bfd3 1-295
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0c8207fd9fdd081f9e7c44069c5fc65816b7df72",
+  "prompts": {},
+  "humans": {
+    "h_d083fb1648bfd3": {
+      "author": "sxy <545231960@qq.com>"
+    }
+  }
+}
