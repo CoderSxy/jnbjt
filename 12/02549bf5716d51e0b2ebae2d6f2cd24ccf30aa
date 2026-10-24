@@ -1,0 +1,100 @@
+tests/production.test.ts
+  s_1e859217a46b21::t_1cf528409e8645 1-172
+apps/api/src/plugins/auth.ts
+  s_1e859217a46b21::t_3ef3a839f50c06 88,90,95-109
+  s_1e859217a46b21::t_2ee8b70b491b49 1-87,89,91-94,110-150
+apps/api/src/modules/auth/routes.ts
+  s_1e859217a46b21::t_46120329a0096e 1-40
+apps/api/src/modules/cities/repository.ts
+  s_1e859217a46b21::t_8aa7a276ee1202 1-100
+tests/auth-isolation.test.ts
+  s_1e859217a46b21::t_a7dfd958368e55 1-5,7,9-11,15-124
+  s_1e859217a46b21::t_1c48cfa9b90708 6,8,12-14
+apps/web/src/features/production/ProductionPage.tsx
+  s_1e859217a46b21::t_6dd1d6fddeba0c 1-99
+docs/operations.md
+  s_1e859217a46b21::t_831df7f66b556a 1-29
+README.md
+  s_1e859217a46b21::t_08e4dde69054d1 3,8,11,13-20,23,25-31
+packages/domain/package.json
+  s_1e859217a46b21::t_c7d129c1cd1e80 1-15
+apps/api/src/modules/cities/routes.ts
+  s_1e859217a46b21::t_3d2e1dbc963216 1-38,57-94
+  s_1e859217a46b21::t_40c54035056ac7 39-56
+packages/domain/tsconfig.json
+  s_1e859217a46b21::t_c72073f192139f 1-10
+tsconfig.json
+  s_1e859217a46b21::t_a509dde0c9bf3c 5
+apps/web/src/styles.css
+  s_1e859217a46b21::t_4bd26a1b23529c 47-52,59-87
+  s_1e859217a46b21::t_52efad201f89f8 88
+apps/web/src/App.tsx
+  s_1e859217a46b21::t_5af3164b3791bf 3-5,14,16-18,25-27
+apps/api/package.json
+  s_1e859217a46b21::t_7dae6ed6544f45 14
+docs/acceptance.md
+  s_1e859217a46b21::t_58a57a1e0b6e26 1-23
+apps/api/src/modules/production/routes.ts
+  s_1e859217a46b21::t_30f9b2c850ab4b 1-18
+.env.example
+  s_1e859217a46b21::t_271d6795da1bf9 9-10
+deploy/nginx-api.conf
+  s_1e859217a46b21::t_ea570d009fd5ef 1-15
+tests/city-version.test.ts
+  s_1e859217a46b21::t_fd89f8f15c4671 1-5,7,9-12,16-23,25-81
+  s_1e859217a46b21::t_88e5f07bc115ab 6,8,13-15,24
+apps/web/src/features/cities/CitiesPage.tsx
+  s_1e859217a46b21::t_2b413d240fafe3 1-133
+packages/domain/src/recipe-graph.ts
+  s_1e859217a46b21::t_96b7bf88607478 1-43
+apps/web/src/features/auth/LoginPage.tsx
+  s_1e859217a46b21::t_b072d332cf319e 1-49
+apps/api/tsconfig.json
+  s_1e859217a46b21::t_2c4c36c7f72ea2 12
+package.json
+  s_1e859217a46b21::t_05931ca601d1a5 21
+tests/helpers/db.ts
+  s_1e859217a46b21::t_4a173934970d9d 53-63
+apps/api/src/app.ts
+  s_1e859217a46b21::t_a5d6113794a2ff 3,5-7,25,37,39-40
+migrations/002_player_data.sql
+  s_1e859217a46b21::t_73b8987b04ef72 1-36
+scripts/create-user.ts
+  s_1e859217a46b21::t_f7735d80e8351d 1-45
+packages/domain/src/index.ts
+  s_1e859217a46b21::t_7601979c2c62dc 1-2
+packages/contracts/src/production.ts
+  s_1e859217a46b21::t_9634403c6e8fd3 1-59
+deploy/jnbjt.service
+  s_1e859217a46b21::t_37c6fd4d830539 1-16
+packages/domain/src/production.ts
+  s_1e859217a46b21::t_4fa47c4ece46e7 1-7,34-39,42,44-48,51-53,56,58-62,65-156,161-186
+  s_1e859217a46b21::t_4c168c98bdd010 8-33,40-41,43,49-50,54-55,57,63-64,157-160
+packages/contracts/src/city.ts
+  s_1e859217a46b21::t_696e9a6ba9e93b 1-30
+packages/contracts/src/index.ts
+  s_1e859217a46b21::t_5ffa3d6fe908b0 2-3
+docs/implementation-plan.md
+  s_1e859217a46b21::t_b6e929719bc956 121,123,127
+  s_1e859217a46b21::t_06b3f31fdc6282 64-68
+deploy/README.md
+  s_1e859217a46b21::t_12c7f61deea71f 1-11
+package-lock.json
+  s_1e859217a46b21::t_dadc65bddfda4c 39,1541-1544,4176-4182
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1202549bf5716d51e0b2ebae2d6f2cd24ccf30aa",
+  "prompts": {},
+  "sessions": {
+    "s_1e859217a46b21": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "1f0a193f-0084-41d5-9d7f-e7eaed0021d1",
+        "model": "default"
+      },
+      "human_author": "sxy <545231960@qq.com>"
+    }
+  }
+}
