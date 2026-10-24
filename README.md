@@ -1,20 +1,31 @@
 # jnbjt-planner
 
-江南百景图个人规划工具（资料查询、城市存档、生产计算等）。设计见 `docs/design.md`，实现计划见 `docs/implementation-plan.md`。
+江南百景图个人规划工具。设计：`docs/design.md`；计划：`docs/implementation-plan.md`。
 
 ## 本地要求
 
 - Node.js ≥ 22.13
-- 与 nero-agent 共用本机 Docker Postgres（`nero-agent-postgres`，`127.0.0.1:5433`），使用**独立库** `jnbjt` / 角色 `jnbjt`（勿写入 `nero_agent` 表）
+- 与 nero-agent 共用 Docker Postgres（`127.0.0.1:5433`），独立库 `jnbjt`
 
 ```bash
-cp .env.example .env   # 填入 DATABASE_URL
+cp .env.example .env
 npm install
-npm test -- tests/wiki-policy.test.ts tests/wiki-probe.test.ts
-npm run wiki:probe -- --limit 20   # 只读采样；原始快照默认不提交
+npm run db:migrate
+npm run import:bundle -- --fixture tests/fixtures/wiki/pages/农田 --fixture tests/fixtures/wiki/pages/餐馆 --publish
+npm run create-user -- <user> <password> admin
+npm test
+npm run typecheck
+npm run build -w @jnbjt/web
+npm run dev:api
+npm run dev:web
 ```
 
-## 当前进度
+## 首版进度（P0–P2）
 
-- [x] 任务 1：Wiki 采集探针与覆盖报告（`docs/data-coverage.md`）
-- [ ] 任务 2–3：知识导入、登录存档、生产计算（首版）
+- [x] 任务 1：Wiki 探针与覆盖报告
+- [x] 任务 2：知识导入与资料检索 UI
+- [x] 任务 3：登录、城市存档、生产计算
+- [x] 任务 8：适用部分（health/ready、运维/验收文档、deploy 占位）
+- [ ] 任务 4–7：长任务 / 地图 / AI / 截图
+
+运维与验收：`docs/operations.md`、`docs/acceptance.md`。

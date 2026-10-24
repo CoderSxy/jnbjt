@@ -1,0 +1,16 @@
+[Unit]
+Description=jnbjt-planner API
+After=network.target
+
+[Service]
+Type=simple
+User=jnbjt
+WorkingDirectory=/opt/jnbjt/current/api
+EnvironmentFile=/etc/jnbjt/jnbjt.env
+ExecStart=/usr/bin/node --import tsx src/server.ts
+Restart=on-failure
+# Memory limits: set after measuring RSS on the shared host; do not copy blindly.
+# MemoryHigh=300M
+
+[Install]
+WantedBy=multi-user.target

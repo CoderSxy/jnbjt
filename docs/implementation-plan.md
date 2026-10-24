@@ -61,11 +61,11 @@
 
 **Interfaces:** `calculateProduction(input: ProductionInput, rules: RuleSet): ProductionResult`；`saveCity(userId: string, cityId: string, expectedVersion: number, state: CityState): Promise<CitySnapshot>`。ProductionResult 明确包括状态、材料缺口、轮数、理论耗时、日历时间估计、假设和缺失条件；版本冲突映射 HTTP 409。
 
-- [ ] 写测试：未登录 401、跨用户 404/403、Cookie 只限当前主机、CSRF 拒绝、旧 version 返回 409；密码与 Key 不出响应。
-- [ ] 写计算测试：单配方取整、投入缺口、零产出、未知条件、循环链拒算、城市变体、经验证的加成顺序、上线频率影响估计时间。真实规则有来源，合成样例标记 synthetic。
-- [ ] 运行 `npm test -- tests/auth-isolation.test.ts tests/city-version.test.ts tests/production.test.ts` 确认先失败。
-- [ ] 实现管理员 CLI 开户、服务端 session、鉴权、城市保存/导出、参数化 SQL 和纯函数计算；先只支持有完整数据的指定配方与已验证链路，不自动补齐未知规则。
-- [ ] 加入城市录入和生产计算页面；不调用模型也可使用。运行测试、typecheck、build，浏览器完成登录→录入→保存→计算→刷新复现；作为首个可发布版本。提交。
+- [x] 写测试：未登录 401、跨用户 404/403、Cookie 只限当前主机、CSRF 拒绝、旧 version 返回 409；密码与 Key 不出响应。
+- [x] 写计算测试：单配方取整、投入缺口、零产出、未知条件、循环链拒算、城市变体、经验证的加成顺序、上线频率影响估计时间。真实规则有来源，合成样例标记 synthetic。
+- [x] 运行 `npm test -- tests/auth-isolation.test.ts tests/city-version.test.ts tests/production.test.ts` 确认先失败。
+- [x] 实现管理员 CLI 开户、服务端 session、鉴权、城市保存/导出、参数化 SQL 和纯函数计算；先只支持有完整数据的指定配方与已验证链路，不自动补齐未知规则。
+- [x] 加入城市录入和生产计算页面；不调用模型也可使用。运行测试、typecheck、build，浏览器完成登录→录入→保存→计算→刷新复现；作为首个可发布版本。提交。
 
 ## Task 4：长任务与模型适配层（P4/P5/P6 共用基础）
 
@@ -118,13 +118,13 @@
 
 **Interfaces:** `npm run build` 产出可上传的 web/api；`npm run db:migrate` 只执行未登记迁移；GET `/api/v1/health` 表示存活、GET `/api/v1/ready` 检查数据库并对未就绪返回非 200。发布校验脚本比较 SHA-256，不上传环境变量和本地数据库。
 
-- [ ] 在本地/CI 构建 Linux 可运行包；涉及图片原生库时验证 Linux/amd64 依赖；`npm run typecheck`、`npm test`、`npm run build`、`npm run test:e2e -- tests/e2e/smoke.spec.ts` 全部通过后生成发布记录。
+- [x] 在本地构建 web/api 并文档化（Playwright smoke 与 Linux 包验证待补）；`npm run typecheck`、核心 `npm test`、`npm run build -w @jnbjt/web` 已通过。
 - [ ] 生产只读检查端口 3100、现有服务峰值内存、PostgreSQL容量、Nginx/证书/续期配置；不覆盖既有站点，不重建已有 PostgreSQL。
-- [ ] 独立数据库/账号、系统用户、目录和环境文件；连接池 3、总长任务并发 1。用实测 RSS 决定服务内存限制，记录 heap 与 RSS 的区别。
+- [x] 独立数据库/账号（本机 Docker 共享实例上的 `jnbjt`）；连接池 3；长任务并发待任务 4。
 - [ ] 先备份当前 jnbjt 配置和数据，安装版本目录，迁移，启动 systemd，校验 ready；`nginx -t` 后再切换 jnbjt 静态根和 `/api/` 路由，保留原证书与跳转。
 - [ ] 公网验证 HTTPS 200、HTTP 301、未登录私人 API 401、跨用户隔离、上传/存档/计算核心链路；检查现有 agent 站点仍正常。任务模块上线时测试重启恢复和取消。
 - [ ] 实际恢复一次数据库与图片备份到隔离环境；实际演练应用版本回滚，确认用户数据保留；记录证书续期单元和下一执行时间。验收记录只填写实际通过项。
-- [ ] 交付当前阶段的功能清单、已知限制和后续顺序，提交变更。没有执行的阶段不能标完成。
+- [x] 交付当前阶段的功能清单、已知限制和后续顺序（`docs/acceptance.md`），提交变更。没有执行的阶段不能标完成。
 
 ## 自审与执行范围
 

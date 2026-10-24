@@ -50,3 +50,14 @@ export async function resetKnowledgeTables(pool: pg.Pool): Promise<void> {
     END $$;
   `);
 }
+
+export async function resetPlayerTables(pool: pg.Pool): Promise<void> {
+  await pool.query(`
+    DO $$ BEGIN
+      PERFORM 1 FROM information_schema.tables WHERE table_name = 'player_cities';
+      IF FOUND THEN
+        TRUNCATE player_city_exports, player_cities, sessions, users RESTART IDENTITY CASCADE;
+      END IF;
+    END $$;
+  `);
+}
