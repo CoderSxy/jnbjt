@@ -1,0 +1,17 @@
+node_modules/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+data/wiki-snapshots/
+data/wiki-raw/
+.tmp/
+playwright-report/
+test-results/
+apps/web/dist/
+apps/api/dist/
+packages/*/dist/
+*.tsbuildinfo

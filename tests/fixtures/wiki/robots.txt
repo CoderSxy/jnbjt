@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /*index.php?*
+Disallow: /*oldid=*
+Disallow: /jiangnan/特殊:
+Disallow: /jiangnan/Special:
+Disallow: /jiangnan/用户:
+Disallow: /jiangnan/User:
+Disallow: /jiangnan/模板:
+Disallow: /jiangnan/Template:
+Allow: /
