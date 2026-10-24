@@ -1,0 +1,134 @@
+:root {
+  --ink: #1c1915;
+  --paper: #f3efe6;
+  --wash: #e7dfd0;
+  --accent: #2f5d50;
+  --line: rgba(28, 25, 21, 0.12);
+  --serif: 'Noto Serif SC', 'Songti SC', serif;
+  --sans: 'Source Sans 3', 'PingFang SC', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  font-family: var(--sans);
+  background:
+    radial-gradient(circle at 12% 10%, rgba(47, 93, 80, 0.12), transparent 40%),
+    linear-gradient(160deg, #f7f3ea 0%, #ebe3d4 55%, #e4dccb 100%);
+}
+
+.shell {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.25rem;
+}
+
+.topbar {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.brand {
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+nav a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.panel {
+  background: color-mix(in srgb, var(--paper) 88%, white);
+  border: 1px solid var(--line);
+  padding: 1.25rem;
+}
+
+.panel h1 {
+  font-family: var(--serif);
+  font-size: 1.4rem;
+  margin: 0 0 0.5rem;
+}
+
+.muted {
+  color: rgba(28, 25, 21, 0.65);
+  margin: 0 0 1rem;
+}
+
+.search-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+input[type='search'] {
+  flex: 1;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--line);
+  background: #fffdf8;
+  font: inherit;
+}
+
+button {
+  border: 0;
+  background: var(--accent);
+  color: #f7f3ea;
+  padding: 0.7rem 1rem;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.hit-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.hit-list li {
+  padding: 0.85rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.hit-list a {
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.meta {
+  font-size: 0.9rem;
+  color: rgba(28, 25, 21, 0.62);
+}
+
+.detail {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+}
+
+.recipe {
+  margin: 0.75rem 0;
+  padding: 0.75rem;
+  background: var(--wash);
+}
+
+@media (max-width: 640px) {
+  .brand {
+    font-size: 1.3rem;
+  }
+}

@@ -1,6 +1,8 @@
 {
   "files": [],
   "references": [
-    { "path": "./packages/knowledge-import" }
+    { "path": "./packages/contracts" },
+    { "path": "./packages/knowledge-import" },
+    { "path": "./apps/api" }
   ]
 }

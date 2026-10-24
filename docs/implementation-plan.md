@@ -48,12 +48,12 @@
 
 **Interfaces:** `parseBuilding(snapshot: SourceSnapshot): ParsedBuildingDraft`；`buildKnowledgeBundle(drafts: ParsedBuildingDraft[]): KnowledgeBundle`；`importKnowledgeBundle(pool: Pool, bundle: KnowledgeBundle): Promise<ImportReport>`；`searchKnowledge(query: KnowledgeQuery): Promise<KnowledgeHit[]>`。类型在 contracts 中定义，事实草稿包含城市分支、原文、null/unknown 和字段来源，不把草稿类型误用成 published fact。
 
-- [ ] 写真实允许样本的快照测试：城市同名分支、图片单位、rowspan/colspan、生产档位、“15+60”等条件表达式；未知值不变成 0，导航内容不进入生产表。
-- [ ] 写数据库测试：同 bundle 重导不重复；人工覆盖不被刷新覆盖；候选导入失败不切换激活知识版本；字段可定位 snapshotId。
-- [ ] 运行 `npm test -- tests/wiki-parser.test.ts tests/knowledge-import.test.ts tests/knowledge-search.test.ts`，确认必要测试先失败；测试库与生产库完全隔离。
-- [ ] 实现编号迁移器、解析器、哈希数据包、暂存/审核/发布 CLI；发布在事务中切换知识版本，至少保留上个可用版本。
-- [ ] 实现 GET `/api/v1/knowledge/search`、GET `/api/v1/buildings/:id` 和前端资料列表/详情，展示来源、许可、更新时间、已确认/待确认。中文检索包含名称、别名和短词降级。
-- [ ] 运行上述测试及 `npm run typecheck`、`npm run build`；人工抽检首批关键数值，不用模型自己“审核”自己的抽取结果。提交。
+- [x] 写真实允许样本的快照测试：城市同名分支、图片单位、rowspan/colspan、生产档位、“15+60”等条件表达式；未知值不变成 0，导航内容不进入生产表。
+- [x] 写数据库测试：同 bundle 重导不重复；人工覆盖不被刷新覆盖；候选导入失败不切换激活知识版本；字段可定位 snapshotId。
+- [x] 运行 `npm test -- tests/wiki-parser.test.ts tests/knowledge-import.test.ts tests/knowledge-search.test.ts`，确认必要测试先失败；测试库与生产库完全隔离。
+- [x] 实现编号迁移器、解析器、哈希数据包、暂存/审核/发布 CLI；发布在事务中切换知识版本，至少保留上个可用版本。
+- [x] 实现 GET `/api/v1/knowledge/search`、GET `/api/v1/buildings/:id` 和前端资料列表/详情，展示来源、许可、更新时间、已确认/待确认。中文检索包含名称、别名和短词降级。
+- [x] 运行上述测试及 `npm run typecheck`、`npm run build`；人工抽检首批关键数值，不用模型自己“审核”自己的抽取结果。提交。
 
 ## Task 3：独立登录、城市存档与生产计算（P1 后半–P2）
 

@@ -14,13 +14,26 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc -b --pretty false",
-    "build": "npm run typecheck",
-    "wiki:probe": "tsx scripts/wiki-probe.ts"
+    "build": "npm run typecheck && npm run build -w @jnbjt/web --if-present",
+    "wiki:probe": "tsx scripts/wiki-probe.ts",
+    "db:migrate": "tsx scripts/migrate.ts",
+    "import:bundle": "tsx scripts/import-bundle.ts",
+    "dev:api": "npm run dev -w @jnbjt/api",
+    "dev:web": "npm run dev -w @jnbjt/web --if-present"
   },
   "devDependencies": {
     "@types/node": "^22.13.10",
+    "@types/pg": "^8.11.11",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2",
     "vitest": "^3.0.9"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.0.2",
+    "@fastify/cors": "^11.0.0",
+    "@sinclair/typebox": "^0.34.30",
+    "cheerio": "^1.1.2",
+    "fastify": "^5.2.1",
+    "pg": "^8.14.1"
   }
 }
