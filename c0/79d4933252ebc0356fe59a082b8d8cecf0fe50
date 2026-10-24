@@ -1,0 +1,78 @@
+docs/design.md
+  s_1e859217a46b21::t_e9395ed37c5439 1-295
+packages/knowledge-import/src/probe.ts
+  s_1e859217a46b21::t_afbc8ad7e18e4b 1-9,11-28,33-40,46-47,53-54,57-58,68-132,135-242,245-254,258-270,274-344
+  s_1e859217a46b21::t_33921cad7c08cb 10,345
+  s_1e859217a46b21::t_05dfcad1494c3b 29-32,41-45,48-52,55-56,59-67
+  s_1e859217a46b21::t_4a871f1676b848 243
+  s_1e859217a46b21::t_fc2f9cc7407aea 133-134
+  s_1e859217a46b21::t_5bf0596b3a0518 244,255-257
+  s_1e859217a46b21::t_2559e6e5b576ab 271-273
+packages/knowledge-import/src/policy.ts
+  s_1e859217a46b21::t_475437a3b0b66d 3-91,94,97-99,101-118,120
+  s_1e859217a46b21::t_65cb24fff9a91b 1-2,92-93,95-96,100,119,121
+docs/data-coverage.md
+  s_1e859217a46b21::t_72a4fd55444faf 3-57
+  s_1e859217a46b21::t_06b9e5c324f118 1-2
+package.json
+  s_1e859217a46b21::t_a81bb019d7bc5b 1-26
+tsconfig.base.json
+  s_1e859217a46b21::t_dabe02d9a10b69 1-18
+.env.example
+  s_1e859217a46b21::t_3ae0e01eab72f0 1-7
+.gitignore
+  s_1e859217a46b21::t_6c049c5d98f45e 1-17
+tsconfig.json
+  s_1e859217a46b21::t_2c02425fb4d830 1-6
+vitest.config.ts
+  s_1e859217a46b21::t_8437d22fc23a00 1-9
+packages/knowledge-import/tsconfig.json
+  s_1e859217a46b21::t_2d3b25ac189aa4 1-9
+tests/fixtures/wiki/robots.txt
+  s_1e859217a46b21::t_494c42e47fd5a2 1-10
+packages/knowledge-import/package.json
+  s_1e859217a46b21::t_cb7532c0623684 1-15
+tests/wiki-policy.test.ts
+  s_1e859217a46b21::t_cec38978520ef1 1-56
+tests/wiki-probe.test.ts
+  s_1e859217a46b21::t_354fb78cb1faa4 1-207
+packages/knowledge-import/src/index.ts
+  s_1e859217a46b21::t_16ad497c441b6e 3
+  s_1e859217a46b21::t_0a49f30cadb441 1-2,4-12
+README.md
+  s_1e859217a46b21::t_5e1be7069b514e 1-20
+docs/implementation-plan.md
+  s_1e859217a46b21::t_8fec819b702d2f 39-43
+  s_1e859217a46b21::t_a7b53fb4ecd0ac 11
+  s_1e859217a46b21::t_e9395ed37c5439 1-10,12-38,44-133
+packages/knowledge-import/src/client.ts
+  s_1e859217a46b21::t_3c3dd05bd4d212 3-10,17-27,30-31,161,163,170,180
+  s_1e859217a46b21::t_c6628b0e10c8e5 107-108
+  s_1e859217a46b21::t_b20fa5cda14f32 1-2,28-29,32-106,109-160,162,164-169,171-179
+  s_1e859217a46b21::t_02c602ff8f9c41 11-16
+packages/knowledge-import/src/types.ts
+  s_1e859217a46b21::t_072dddec848bc4 1-66
+scripts/wiki-probe.ts
+  s_1e859217a46b21::t_886283620e7c8b 11-32
+  s_1e859217a46b21::t_ea15affd3ac0b1 8-10
+  s_1e859217a46b21::t_b20325bb744291 33-35
+  s_1e859217a46b21::t_f629d514505bba 1-7,36-152
+package-lock.json
+  s_1e859217a46b21::t_31917766c05163 1-1671
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c079d4933252ebc0356fe59a082b8d8cecf0fe50",
+  "prompts": {},
+  "sessions": {
+    "s_1e859217a46b21": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "1f0a193f-0084-41d5-9d7f-e7eaed0021d1",
+        "model": "default"
+      },
+      "human_author": "sxy <545231960@qq.com>"
+    }
+  }
+}
