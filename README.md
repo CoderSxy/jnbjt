@@ -8,7 +8,8 @@
 cp .env.example .env
 npm install
 npm run db:migrate
-npm run import:bundle -- --fixture tests/fixtures/wiki/pages/农田 --fixture tests/fixtures/wiki/pages/餐馆 --publish
+npm run import:bundle -- --bundle tests/fixtures/wiki/bundles/sample --publish
+# 或单页夹具：npm run import:bundle -- --fixture tests/fixtures/wiki/pages/农田 --publish
 npm run create-user -- <user> <password> admin
 npm test
 npm run typecheck

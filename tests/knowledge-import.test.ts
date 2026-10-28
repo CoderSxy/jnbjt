@@ -5,6 +5,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { execFileSync } from 'node:child_process';
 import {
   buildKnowledgeBundle,
+  buildKnowledgeBundleFromWikiSnapshotDir,
   importKnowledgeBundle,
   parseBuilding,
 } from '@jnbjt/knowledge-import';
@@ -143,6 +144,32 @@ describe('importKnowledgeBundle', () => {
          WHERE bt.name = '农田' LIMIT 1`,
       );
       expect(evidence.rows[0]?.snapshot_id).toBeTruthy();
+    });
+  });
+
+  it('imports staged from wiki-snapshot bundle directory', async () => {
+    const bundleDir = join(
+      dirname(fileURLToPath(import.meta.url)),
+      'fixtures',
+      'wiki',
+      'bundles',
+      'sample',
+    );
+    const { bundle, load } = buildKnowledgeBundleFromWikiSnapshotDir(bundleDir);
+    expect(load.validation.errors).toEqual([]);
+
+    await withTestPool(async (pool) => {
+      await resetKnowledgeTables(pool);
+      const report = await importKnowledgeBundle(pool, bundle, {
+        publish: false,
+        htmlBySnapshotId: load.htmlBySnapshotId,
+      });
+      expect(report.status).toBe('staged');
+      const staged = await pool.query<{ status: string }>(
+        `SELECT status FROM knowledge_imports WHERE id = $1`,
+        [report.importId],
+      );
+      expect(staged.rows[0]?.status).toBe('staged');
     });
   });
 });
