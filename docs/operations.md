@@ -28,4 +28,4 @@ npm run dev:web    # 5173，代理 /api
 - Cookie 省略 Domain；生产设 `COOKIE_SECURE=true`。
 - 本地已实现长任务/AI/截图链路；生产尚未部署。更新先运行迁移（含 006），长任务全局并发 1、每用户活动任务上限 10。
 - 截图解码使用 sharp，生产安装需要匹配服务器平台的原生依赖；Linux/amd64 发布包仍需实际验收。
-- 生产计算仅允许 active 且人工审核（reviewed/published）、具有来源快照的配方；新导入的 draft 不可直接计算。
+- 生产计算仅允许 active 且人工审核（reviewed/published）、具有来源快照且数值完整的配方；审核 CLI/API 见 [production-recipe-review.md](production-recipe-review.md)。

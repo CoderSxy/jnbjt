@@ -19,6 +19,7 @@
     "wiki:probe": "tsx scripts/wiki-probe.ts",
     "db:migrate": "tsx scripts/migrate.ts",
     "import:bundle": "tsx scripts/import-bundle.ts",
+    "review:recipes": "tsx scripts/review-recipes.ts",
     "create-user": "tsx scripts/create-user.ts",
     "dev:api": "npm run dev -w @jnbjt/api",
     "dev:web": "npm run dev -w @jnbjt/web --if-present"

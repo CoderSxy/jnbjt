@@ -2,6 +2,7 @@ import type { Pool } from 'pg';
 import type { CitySnapshot, RecipeRef, ProductionResult, ResourceAmount } from '@jnbjt/contracts';
 import { calculateProduction } from '@jnbjt/domain';
 import { getCity } from '../cities/repository.js';
+import { isRecipeRefExactCalculationReady } from '../knowledge/recipe-review.js';
 
 const cityNames: Record<string, string> = { yingtian: '应天府', suzhou: '苏州', hangzhou: '杭州', songjiang: '松江', yangzhou: '扬州', jiaxing: '嘉兴', huzhou: '湖州', zhenjiang: '镇江' };
 export function cityVariant(city: CitySnapshot): string { return cityNames[city.cityKey] ?? city.cityKey; }
@@ -25,10 +26,22 @@ export async function eligibleRecipes(pool: Pool, city: CitySnapshot): Promise<R
     JOIN knowledge_imports i ON i.id = k.import_id AND i.status = 'published'
     JOIN source_snapshots s ON s.id = r.snapshot_id JOIN source_pages p ON p.id = s.source_page_id
     WHERE v.city = $1 AND r.confirmation IN ('reviewed', 'published') ORDER BY b.name, r.tier, r.id`, [cityVariant(city)]);
-  return result.rows.map((r) => ({id: r.id, name: `${r.building_name} · ${r.city} · ${r.tier ?? '未知档位'}`, buildingName: r.building_name, city: r.city, tier: r.tier ?? 'unknown',
-    sourceNote: `snapshot:${r.source_snapshot} ${r.canonical_url}`, snapshotId: r.source_snapshot, sourceUrl: r.canonical_url,
-    durationSeconds: r.duration_unknown || !(r.duration_seconds > 0) ? 'unknown' : r.duration_seconds,
-    workers: r.workers_unknown || r.workers === null ? 'unknown' : r.workers, inputs: amounts(r.inputs), outputs: amounts(r.outputs) }));
+  return result.rows
+    .map((r) => ({
+      id: r.id,
+      name: `${r.building_name} · ${r.city} · ${r.tier ?? '未知档位'}`,
+      buildingName: r.building_name,
+      city: r.city,
+      tier: r.tier ?? 'unknown',
+      sourceNote: `snapshot:${r.source_snapshot} ${r.canonical_url}`,
+      snapshotId: r.source_snapshot,
+      sourceUrl: r.canonical_url,
+      durationSeconds: r.duration_unknown || !(r.duration_seconds > 0) ? 'unknown' : r.duration_seconds,
+      workers: r.workers_unknown || r.workers === null ? 'unknown' : r.workers,
+      inputs: amounts(r.inputs),
+      outputs: amounts(r.outputs),
+    }))
+    .filter((recipe) => isRecipeRefExactCalculationReady(recipe));
 }
 export async function calculateSavedProduction(pool: Pool, userId: string, request: {cityId: string; recipeId: string; targetInventory: Record<string, number>; onlineFrequencyPerDay: number}): Promise<ProductionResult | null> {
   const city = await getCity(pool, userId, request.cityId);

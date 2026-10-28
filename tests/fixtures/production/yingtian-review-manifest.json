@@ -1,0 +1,11 @@
+{
+  "city": "应天府",
+  "confirmation": "reviewed",
+  "allowIncomplete": false,
+  "notes": "仓库 Wiki 夹具中已人工核对、数值完整的应天府配方（其余 draft 仍不可精确计算）。",
+  "recipes": [
+    { "buildingName": "农田", "tier": "普通", "durationSeconds": 60 },
+    { "buildingName": "农田", "tier": "精品", "durationSeconds": 300 },
+    { "buildingName": "餐馆", "durationSeconds": 90 }
+  ]
+}
