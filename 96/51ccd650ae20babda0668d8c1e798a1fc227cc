@@ -1,0 +1,137 @@
+tests/assistant-failures.test.ts
+  s_624ec6a2133af6::t_f22c45d9d4d0aa 38-43
+  s_624ec6a2133af6::t_ccf401ae64245c 29-37
+docs/superpowers/plans/2026-10-25-review-fixes.md
+  s_624ec6a2133af6::t_065cd4629723aa 1-25
+tests/production.test.ts
+  s_624ec6a2133af6::t_ccf401ae64245c 164,173-181,183-187
+  s_624ec6a2133af6::t_7792f83e8b17f6 182
+  s_624ec6a2133af6::t_3163a724314419 188-196
+apps/api/src/modules/ai/assistant-routes.ts
+  s_624ec6a2133af6::t_bc00151660c136 29
+  s_624ec6a2133af6::t_3ff8f7f30cc24d 1,25,30
+  s_624ec6a2133af6::t_114ed66fb54baa 4,53-65
+tests/e2e/editor.spec.ts
+  s_624ec6a2133af6::t_79ce675b05cb11 1,38,41-44
+  s_624ec6a2133af6::t_b577b5d54bb1f3 78-86
+  s_624ec6a2133af6::t_886f52c96d0cc0 2,4-27,29-37,39-40,45-77
+docs/operations.md
+  s_624ec6a2133af6::t_065cd4629723aa 29-31
+tests/recognition-apply.test.ts
+  s_624ec6a2133af6::t_dc6b15de8e8467 1-2,117,123,165-174,180-188,191-214
+  s_624ec6a2133af6::t_bc00151660c136 189-190
+  s_624ec6a2133af6::t_d81fe2cbea293a 3-4,7,11,19-20,54-62,115-116,118-122,124-127
+  s_624ec6a2133af6::t_fdd5f9a3082c78 215-216
+apps/api/src/modules/imports/recognize.ts
+  s_624ec6a2133af6::t_69e50d6c1178b6 50-54,56,58-75
+  s_624ec6a2133af6::t_bc00151660c136 25,55,57
+  s_624ec6a2133af6::t_0f764a70950c5a 2,4,7-22,24,27-29,31-35,37-48
+apps/api/src/modules/imports/routes.ts
+  s_624ec6a2133af6::t_3ff8f7f30cc24d 10,30,94-99,113-123
+  s_624ec6a2133af6::t_114ed66fb54baa 6,100-112
+tests/production-rules.test.ts
+  s_624ec6a2133af6::t_280db720967903 1-7,9
+  s_624ec6a2133af6::t_3163a724314419 8
+docs/acceptance.md
+  s_624ec6a2133af6::t_065cd4629723aa 3,5,7-19,21,23,25,27-34
+tests/layout-roundtrip.test.ts
+  s_624ec6a2133af6::t_d7063c2af2db68 69-75
+apps/web/src/features/imports/UploadPage.tsx
+  s_624ec6a2133af6::t_2708f619fb5a2b 1,3,6,8-33,35-49,54-71,77,79-81,83
+  s_624ec6a2133af6::t_1d14facb2f0c45 34
+apps/api/src/modules/production/service.ts
+  s_624ec6a2133af6::t_8319bb49484f55 2,12-19,31
+  s_624ec6a2133af6::t_133c155cdb540a 1,3-5,7-11,20-30,32-42
+  s_624ec6a2133af6::t_4f6918ece566b1 6
+tests/e2e/recognition.spec.ts
+  s_624ec6a2133af6::t_4784e48bf5dad0 1-33
+playwright.config.ts
+  s_624ec6a2133af6::t_886f52c96d0cc0 2-8,10-15
+  s_624ec6a2133af6::t_ced8af173d1ae4 1,9
+tests/vision-pipeline.test.ts
+  s_624ec6a2133af6::t_7ebd0579484e45 68-73
+  s_624ec6a2133af6::t_7becf3be110cb6 1-67
+  s_624ec6a2133af6::t_4e339a14c67453 74-98
+package.json
+  s_624ec6a2133af6::t_3b7f6c36b8933a 17
+  s_624ec6a2133af6::t_886f52c96d0cc0 15
+  s_624ec6a2133af6::t_a06d0aea446d69 27,40-41
+tests/production-saved.test.ts
+  s_624ec6a2133af6::t_69e50d6c1178b6 44-54
+  s_624ec6a2133af6::t_2851eb27eb68b9 1-21,23-43
+  s_624ec6a2133af6::t_8319bb49484f55 22
+apps/api/src/modules/ai/assistant.ts
+  s_624ec6a2133af6::t_6202bf001a5281 71
+  s_624ec6a2133af6::t_4f6918ece566b1 76-77,79,81
+  s_624ec6a2133af6::t_6f6ac9bc704e57 8,41,48,67-69,72-73,75,78,80,82-96
+  s_624ec6a2133af6::t_59586c43a67fdb 74
+README.md
+  s_624ec6a2133af6::t_065cd4629723aa 22,24-34,36
+apps/api/src/modules/layouts/repository.ts
+  s_624ec6a2133af6::t_29c01a074a5963 33,38,42-43
+tests/e2e/production.spec.ts
+  s_624ec6a2133af6::t_fe1ad5fc6ad713 1-31
+apps/web/src/features/production/ProductionPage.tsx
+  s_624ec6a2133af6::t_dcc6ec33f7c40b 1,5-6,10-13,15-26,28-33,35-53
+tests/assistant-grounding.test.ts
+  s_624ec6a2133af6::t_6f6ac9bc704e57 80-81
+apps/api/src/modules/jobs/repository.ts
+  s_624ec6a2133af6::t_63b6fadeb630b6 57-71,73-80,82-97,150-151
+  s_624ec6a2133af6::t_50de96a39981f1 119-143
+tests/queue-apply-concurrency.test.ts
+  s_624ec6a2133af6::t_c6892bedfadc7e 4,10-46,56
+  s_624ec6a2133af6::t_5934726ec14851 5,71,80,93,104,122,127-128,132,138-141,146-147,183-235
+  s_624ec6a2133af6::t_e454dc213de21c 89-90,100-101,110-111,116,142-143,153-182,236-237
+  s_624ec6a2133af6::t_95043feb09b548 1-3,6-9,47-55,57-70,72-79,81-88,91-92,94-99,102-103,105-109,112-115,117-121,123-126,129-131,133-137,144-145,148-152
+tests/uploads.test.ts
+  s_624ec6a2133af6::t_b4f8e920eac379 11-14,17-18,24-28
+  s_624ec6a2133af6::t_d81fe2cbea293a 29-51
+apps/api/src/plugins/uploads.ts
+  s_624ec6a2133af6::t_d47edf0d21878b 27
+  s_624ec6a2133af6::t_0f764a70950c5a 1,17,22,24-26,28-29,31-44
+migrations/006_recognition_jobs.sql
+  s_624ec6a2133af6::t_0f764a70950c5a 1-2
+apps/web/src/features/imports/RecognitionReview.tsx
+  s_624ec6a2133af6::t_b3f30bfbb4af0b 1,3-5,9-10,12-24,28-31,33-46,53-65
+packages/domain/src/production.ts
+  s_624ec6a2133af6::t_5376d4db64f0df 102
+  s_624ec6a2133af6::t_133c155cdb540a 97,99-101,103-109,123-124,150
+  s_624ec6a2133af6::t_4f6918ece566b1 98
+apps/api/src/modules/imports/apply.ts
+  s_624ec6a2133af6::t_50de96a39981f1 22,24,29-40
+  s_624ec6a2133af6::t_1a9b0885d738f7 2-3,13-14,61-63,67-68,70-72
+  s_624ec6a2133af6::t_63b6fadeb630b6 4,16-21,23,25-28,41-42,44-57,59-60,64,69,75-84,86-96,98,100-101
+apps/api/src/modules/production/routes.ts
+  s_624ec6a2133af6::t_133c155cdb540a 3-4,7-12,14-17,19-21
+apps/web/src/features/assistant/AssistantPage.tsx
+  s_624ec6a2133af6::t_dcc6ec33f7c40b 2,6-11,25,55-57,66-67,84-87
+apps/api/src/modules/ai/client.ts
+  s_624ec6a2133af6::t_5ceda57107d04f 189-201,204,208
+  s_624ec6a2133af6::t_0f764a70950c5a 51,74,88,91-94,106
+apps/api/src/modules/knowledge/repository.ts
+  s_624ec6a2133af6::t_5db80ba4af2dbd 8,24-63
+apps/web/src/features/cities/CitiesPage.tsx
+  s_624ec6a2133af6::t_1576c4983ba9dd 108,122,127
+apps/web/src/features/editor/MapEditor.tsx
+  s_624ec6a2133af6::t_577721b6757311 1-2,54-60,67-102,105,121-122,124-140,143-153,168-170,180-181,184,187,190,193,196,198-199,232,274
+package-lock.json
+  s_624ec6a2133af6::t_56577a24696c1c 20-21,24,928-937,1547-2046,2140-2155,3145-3153,3977-4005,4393-4441,4586-4592
+tests/knowledge-search.test.ts
+  s_624ec6a2133af6::t_15483db147ccba 74-95
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9651ccd650ae20babda0668d8c1e798a1fc227cc",
+  "prompts": {},
+  "sessions": {
+    "s_624ec6a2133af6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a16d20-684d-7a91-9541-ce6bdc050cf7",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "sxy <545231960@qq.com>"
+    }
+  }
+}
