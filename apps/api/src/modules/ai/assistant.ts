@@ -3,6 +3,7 @@ import type {
   AssistantAnswer,
   AssistantCitation,
   AssistantInput,
+  AssistantPlanContext,
   ProductionResult,
 } from '@jnbjt/contracts';
 import { calculateSavedProduction, eligibleRecipes, cityVariant } from '../production/service.js';
@@ -37,6 +38,7 @@ export async function answerQuestion(
   const assumptions: string[] = [];
   const unsupported: string[] = [];
   const suggestions: string[] = [];
+  let planContext: AssistantPlanContext | undefined;
 
   const selectedCity = input.cityId ? await toolGetCity(context.pool, context.userId, input.cityId) : null;
   const seedTerms = ['农田', '餐馆', '织布坊', '生产', '应天府', '苏州', '杭州'].filter((t) =>
@@ -90,7 +92,20 @@ export async function answerQuestion(
         if (result) {
           calculations.push(result);
           missing.push(...result.missingConditions, ...result.blockers);
-          if (!allCitations.some((c) => c.snapshotId === recipe.snapshotId)) allCitations.push({snapshotId: recipe.snapshotId, entityName: recipe.buildingName, sourceUrl: recipe.sourceUrl, snippet: recipe.sourceNote!});
+          planContext = {
+            recipeId: recipe.id,
+            recipeLabel: recipe.name,
+            targetInventory: { [resource]: Number(targets[0]![2]) },
+            onlineFrequencyPerDay: Number(frequency[1]),
+          };
+          if (!allCitations.some((c) => c.snapshotId === recipe.snapshotId)) {
+            allCitations.push({
+              snapshotId: recipe.snapshotId,
+              entityName: recipe.buildingName,
+              sourceUrl: recipe.sourceUrl,
+              snippet: recipe.sourceNote!,
+            });
+          }
         }
       }
     }
@@ -155,9 +170,9 @@ export async function answerQuestion(
   if (/写城市|直接写|修改建议/.test(question)) {
     suggestions.push('修改建议只输出差异，不直接写回城市或布局');
   } else if (suggestions.length === 0 && calculations.length > 0) {
-    const c = calculations[0]!;
+    const c = calculations[0] as ProductionResult;
     suggestions.push(
-      `建议差异：目标缺口 ${JSON.stringify(c.gaps)}；轮数 ${String(c.rounds)}（不直接写回存档）`,
+      `计划草稿（未写存档）：目标缺口 ${JSON.stringify(c.gaps)}；轮数 ${String(c.rounds)}；请在界面确认后再应用。`,
     );
   }
 
@@ -169,5 +184,6 @@ export async function answerQuestion(
     assumptions,
     missing,
     unsupported,
+    ...(planContext ? { planContext } : {}),
   };
 }
