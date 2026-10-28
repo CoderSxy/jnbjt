@@ -6,6 +6,8 @@ export type AuthUser = {
   id: string;
   username: string;
   role: string;
+  phone?: string | null;
+  displayName?: string | null;
 };
 
 declare module 'fastify' {
@@ -55,16 +57,25 @@ export async function registerAuth(app: FastifyInstance): Promise<void> {
       user_id: string;
       username: string;
       role: string;
+      phone: string | null;
+      display_name: string | null;
+      status: string;
     }>(
-      `SELECT u.id AS user_id, u.username, u.role
+      `SELECT u.id AS user_id, u.username, u.role, u.phone, u.display_name, u.status
        FROM sessions s
        JOIN users u ON u.id = s.user_id
        WHERE s.id = $1 AND s.revoked_at IS NULL AND s.expires_at > now()`,
       [sid],
     );
     const row = result.rows[0];
-    if (!row) return;
-    request.user = { id: row.user_id, username: row.username, role: row.role };
+    if (!row || row.status !== 'active') return;
+    request.user = {
+      id: row.user_id,
+      username: row.username,
+      role: row.role,
+      phone: row.phone,
+      displayName: row.display_name,
+    };
   });
 }
 

@@ -10,6 +10,7 @@ npm install
 npm run db:migrate
 npm run import:bundle -- --fixture tests/fixtures/wiki/pages/农田 --fixture tests/fixtures/wiki/pages/餐馆 --publish
 npm run create-user -- <user> <password> admin
+# 或使用 Web / API 手机号验证码登录，见 docs/auth-sms.md
 npm test
 npm run typecheck
 npm run build -w @jnbjt/web
