@@ -54,32 +54,47 @@ export async function enqueueJob(
   key: string,
   input: JobInput,
 ): Promise<Job> {
-  const existing = await pool.query<JobRow>(
-    `SELECT id, user_id, idempotency_key, kind, status, input, result, error, attempts,
-            worker_id, lease_expires_at::text, created_at::text, updated_at::text
-     FROM jobs WHERE user_id = $1 AND idempotency_key = $2`,
-    [userId, key],
-  );
-  if (existing.rows[0]) return mapJob(existing.rows[0]);
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    // Serialize each user's idempotency lookup, limit check, and insertion.
+    await client.query("SELECT pg_advisory_xact_lock(hashtextextended('jobs:enqueue:' || $1::text, 0))", [userId]);
+    const existing = await client.query<JobRow>(
+      `SELECT id, user_id, idempotency_key, kind, status, input, result, error, attempts,
+              worker_id, lease_expires_at::text, created_at::text, updated_at::text
+       FROM jobs WHERE user_id = $1 AND idempotency_key = $2`,
+      [userId, key],
+    );
+    if (existing.rows[0]) {
+      await client.query('COMMIT');
+      return mapJob(existing.rows[0]);
+    }
 
-  const queued = await pool.query<{ n: string }>(
-    `SELECT count(*)::text AS n FROM jobs
-     WHERE user_id = $1 AND status IN ('queued', 'running')`,
-    [userId],
-  );
-  if (Number(queued.rows[0]!.n) >= MAX_QUEUE_PER_USER) {
-    throw new QueueLimitError();
+    const queued = await client.query<{ n: string }>(
+      `SELECT count(*)::text AS n FROM jobs
+       WHERE user_id = $1 AND status IN ('queued', 'running')`,
+      [userId],
+    );
+    if (Number(queued.rows[0]!.n) >= MAX_QUEUE_PER_USER) {
+      throw new QueueLimitError();
+    }
+
+    const id = randomUUID();
+    const result = await client.query<JobRow>(
+      `INSERT INTO jobs (id, user_id, idempotency_key, kind, status, input)
+       VALUES ($1, $2, $3, $4, 'queued', $5::jsonb)
+       RETURNING id, user_id, idempotency_key, kind, status, input, result, error, attempts,
+                 worker_id, lease_expires_at::text, created_at::text, updated_at::text`,
+      [id, userId, key, input.kind, JSON.stringify(input)],
+    );
+    await client.query('COMMIT');
+    return mapJob(result.rows[0]!);
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
   }
-
-  const id = randomUUID();
-  const result = await pool.query<JobRow>(
-    `INSERT INTO jobs (id, user_id, idempotency_key, kind, status, input)
-     VALUES ($1, $2, $3, $4, 'queued', $5::jsonb)
-     RETURNING id, user_id, idempotency_key, kind, status, input, result, error, attempts,
-               worker_id, lease_expires_at::text, created_at::text, updated_at::text`,
-    [id, userId, key, input.kind, JSON.stringify(input)],
-  );
-  return mapJob(result.rows[0]!);
 }
 
 export async function getJobForUser(
@@ -101,21 +116,39 @@ export async function cancelJob(
   userId: string,
   jobId: string,
 ): Promise<Job | null> {
-  const result = await pool.query<JobRow>(
-    `UPDATE jobs
-     SET status = 'cancelled', updated_at = now(), worker_id = NULL, lease_expires_at = NULL
-     WHERE id = $1 AND user_id = $2 AND status IN ('queued', 'running')
-     RETURNING id, user_id, idempotency_key, kind, status, input, result, error, attempts,
-               worker_id, lease_expires_at::text, created_at::text, updated_at::text`,
-    [jobId, userId],
-  );
-  return result.rows[0] ? mapJob(result.rows[0]) : null;
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const result = await client.query<JobRow>(
+      `UPDATE jobs
+       SET status = 'cancelled', updated_at = now(), worker_id = NULL, lease_expires_at = NULL
+       WHERE id = $1 AND user_id = $2 AND status IN ('queued', 'running')
+       RETURNING id, user_id, idempotency_key, kind, status, input, result, error, attempts,
+                 worker_id, lease_expires_at::text, created_at::text, updated_at::text`,
+      [jobId, userId],
+    );
+    if (result.rows[0]) {
+      await client.query(
+        `DELETE FROM recognition_drafts WHERE job_id = $1 AND user_id = $2 AND status = 'pending_review'`,
+        [jobId, userId],
+      );
+    }
+    await client.query('COMMIT');
+    return result.rows[0] ? mapJob(result.rows[0]) : null;
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
 }
 
 export async function claimNextJob(pool: Pool, workerId: string): Promise<Job | null> {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
+    // The global capacity check and claim must have a single transaction owner.
+    await client.query("SELECT pg_advisory_xact_lock(hashtextextended('jobs:claim', 0))");
     const running = await client.query<{ n: string }>(
       `SELECT count(*)::text AS n FROM jobs
        WHERE status = 'running' AND lease_expires_at > now()`,

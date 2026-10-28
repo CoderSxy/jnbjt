@@ -94,7 +94,19 @@ export function calculateProduction(input: ProductionInput, rules: RuleSet): Pro
     };
   }
 
-  const primaryOut = recipe.outputs.find((o) => typeof o.amount === 'number');
+  const targets = Object.keys(input.targetInventory);
+  if (!Object.values(input.targetInventory).every((v) => Number.isSafeInteger(v) && v >= 0)) missingConditions.push('target must be a safe nonnegative integer');
+  if (targets.length !== 1 || !recipe.outputs.some((o) => o.resource === targets[0])) {
+    missingConditions.push('choose exactly one recipe output target');
+  }
+  if (!Number.isInteger(input.availableWorkers) || input.availableWorkers < 0) missingConditions.push('available workers unknown');
+  if (!Number.isInteger(input.buildingCount) || input.buildingCount < 1) missingConditions.push('building count unknown or no matching buildings');
+  if (!Number.isFinite(input.onlineFrequencyPerDay) || input.onlineFrequencyPerDay <= 0) missingConditions.push('online frequency required');
+  for (const resource of [...targets, ...recipe.inputs.map((i) => i.resource)]) {
+    if (!Number.isFinite(input.inventory[resource])) missingConditions.push(`inventory unknown: ${resource}`);
+  }
+  if (missingConditions.length) return { status: 'need_more_data', gaps, rounds: null, theoreticalSeconds: null, calendarSecondsEstimate: null, assumptions, missingConditions, blockers };
+  const primaryOut = recipe.outputs.find((o) => o.resource === targets[0]);
   if (!primaryOut || typeof primaryOut.amount !== 'number' || primaryOut.amount <= 0) {
     return {
       status: 'rejected',
@@ -108,8 +120,8 @@ export function calculateProduction(input: ProductionInput, rules: RuleSet): Pro
     };
   }
 
-  const target = input.targetInventory[primaryOut.resource] ?? 0;
-  const have = input.inventory[primaryOut.resource] ?? 0;
+  const target = input.targetInventory[primaryOut.resource]!;
+  const have = input.inventory[primaryOut.resource]!;
   const need = Math.max(0, target - have);
   gaps[primaryOut.resource] = need;
 
@@ -135,7 +147,7 @@ export function calculateProduction(input: ProductionInput, rules: RuleSet): Pro
   for (const item of recipe.inputs) {
     if (typeof item.amount !== 'number') continue;
     const required = item.amount * rounds * input.buildingCount;
-    const available = input.inventory[item.resource] ?? 0;
+    const available = input.inventory[item.resource]!;
     const gap = Math.max(0, required - available);
     gaps[item.resource] = gap;
     if (gap > 0) blockers.push(`input shortfall ${item.resource}: ${gap}`);

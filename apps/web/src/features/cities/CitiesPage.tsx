@@ -105,7 +105,7 @@ export function CitiesPage() {
       <ul className="hit-list">
         {(cities.data ?? []).map((city) => (
           <li key={city.id}>
-            <button type="button" className="linkish" onClick={() => setSelected(city)}>
+            <button type="button" className="linkish" onClick={() => { setSelected(city); setGrain(city.state.inventory['粮食'] == null ? '' : String(city.state.inventory['粮食'])); setMessage(null); }}>
               {city.displayName}
             </button>
             <div className="meta">
@@ -119,12 +119,12 @@ export function CitiesPage() {
           <h2>编辑 {selected.displayName}</h2>
           <label>
             粮食库存
-            <input value={grain} onChange={(e) => setGrain(e.target.value)} />
+            <input type="number" min="0" step="1" required value={grain} onChange={(e) => setGrain(e.target.value)} />
           </label>
           <button type="submit">保存</button>
           {message && <p className="muted">{message}</p>}
           <p className="meta">
-            <Link to={`/production?cityId=${selected.id}`}>去生产计算</Link>
+            <Link to={`/production?cityId=${selected.id}`}>去生产计算</Link> · <Link to={`/editor?cityId=${selected.id}`}>编辑地图</Link>
           </p>
         </form>
       )}

@@ -1,3 +1,4 @@
+import sharp from 'sharp';
 import { createHash, randomUUID } from 'node:crypto';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
@@ -13,87 +14,35 @@ export type ValidatedImage = {
   contentHash: string;
 };
 
-function sniffMime(buf: Buffer): ValidatedImage['mime'] | null {
-  if (buf.length >= 3 && buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return 'image/jpeg';
-  if (
-    buf.length >= 8 &&
-    buf[0] === 0x89 &&
-    buf[1] === 0x50 &&
-    buf[2] === 0x4e &&
-    buf[3] === 0x47
-  ) {
-    return 'image/png';
-  }
-  if (
-    buf.length >= 12 &&
-    buf.toString('ascii', 0, 4) === 'RIFF' &&
-    buf.toString('ascii', 8, 12) === 'WEBP'
-  ) {
-    return 'image/webp';
-  }
-  return null;
-}
-
-function readPngSize(buf: Buffer): { width: number; height: number } | null {
-  if (buf.length < 24) return null;
-  return { width: buf.readUInt32BE(16), height: buf.readUInt32BE(20) };
-}
-
-/** Strip common JPEG APP1 (EXIF) marker by rewriting without APP segments — best-effort. */
-function stripJpegExif(buf: Buffer): Buffer {
-  if (sniffMime(buf) !== 'image/jpeg') return buf;
-  // Keep SOI and scan for SOS; drop APP0-APP15 between.
-  const out: number[] = [0xff, 0xd8];
-  let i = 2;
-  while (i + 3 < buf.length) {
-    if (buf[i] !== 0xff) break;
-    const marker = buf[i + 1]!;
-    if (marker === 0xd9 || marker === 0xda) {
-      out.push(...buf.subarray(i));
-      return Buffer.from(out);
-    }
-    const size = buf.readUInt16BE(i + 2);
-    if (marker >= 0xe1 && marker <= 0xef) {
-      i += 2 + size;
-      continue;
-    }
-    out.push(...buf.subarray(i, i + 2 + size));
-    i += 2 + size;
-  }
-  return buf;
-}
-
-export function validateImageBuffer(buf: Buffer, declaredMime?: string): ValidatedImage {
+export async function validateImageBuffer(buf: Buffer, declaredMime?: string): Promise<ValidatedImage> {
   if (buf.byteLength > MAX_UPLOAD_BYTES) {
     throw Object.assign(new Error('file too large'), { code: 'TOO_LARGE' });
   }
   if (/heic|heif/i.test(declaredMime ?? '')) {
-    throw Object.assign(new Error('HEIC not supported; convert to JPEG/PNG/WebP first'), {
-      code: 'HEIC',
+    throw Object.assign(new Error('HEIC not supported; convert to JPEG/PNG/WebP first'), { code: 'HEIC' });
+  }
+  try {
+    const image = sharp(buf, { limitInputPixels: MAX_PIXELS, animated: true });
+    const metadata = await image.metadata();
+    const mime = ({ jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp' } as Record<string, string>)[metadata.format ?? ''];
+    if (!mime || !metadata.width || !metadata.height || (metadata.pages ?? 1) > 1) {
+      throw new Error('unsupported or spoofed image type');
+    }
+    if (metadata.width * metadata.height > MAX_PIXELS) throw new Error('too many pixels');
+    if (declaredMime?.startsWith('image/') && declaredMime !== mime) throw new Error('spoofed image type');
+    // Decoding verifies the complete image. Re-encoding removes EXIF, XMP and other metadata.
+    const cleaned = await image.rotate().toBuffer({ resolveWithObject: true });
+    return {
+      mime: mime as ValidatedImage['mime'], buffer: cleaned.data,
+      width: cleaned.info.width, height: cleaned.info.height,
+      contentHash: createHash('sha256').update(cleaned.data).digest('hex'),
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw Object.assign(new Error(`invalid image: ${message}`), {
+      code: /pixel/i.test(message) ? 'TOO_MANY_PIXELS' : 'BAD_TYPE',
     });
   }
-  const mime = sniffMime(buf);
-  if (!mime) {
-    throw Object.assign(new Error('unsupported or spoofed image type'), { code: 'BAD_TYPE' });
-  }
-  let width: number | null = null;
-  let height: number | null = null;
-  if (mime === 'image/png') {
-    const size = readPngSize(buf);
-    width = size?.width ?? null;
-    height = size?.height ?? null;
-    if (width && height && width * height > MAX_PIXELS) {
-      throw Object.assign(new Error('too many pixels'), { code: 'TOO_MANY_PIXELS' });
-    }
-  }
-  const cleaned = mime === 'image/jpeg' ? stripJpegExif(buf) : buf;
-  return {
-    mime,
-    buffer: cleaned,
-    width,
-    height,
-    contentHash: createHash('sha256').update(cleaned).digest('hex'),
-  };
 }
 
 export function uploadsRoot(): string {

@@ -66,6 +66,13 @@ describe('layout roundtrip', () => {
         notes: '练习地图',
       };
 
+      const missingBase = await app.inject({
+        method: 'PUT', url: `/api/v1/cities/${cityId}/layout`,
+        headers: { origin: 'http://127.0.0.1:3100', host: '127.0.0.1:3100', cookie },
+        payload: { expectedVersion: 9, layout },
+      });
+      expect(missingBase.statusCode).toBe(409);
+
       const saved = await app.inject({
         method: 'PUT',
         url: `/api/v1/cities/${cityId}/layout`,

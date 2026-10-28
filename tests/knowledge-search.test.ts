@@ -71,6 +71,28 @@ describe('knowledge search API', () => {
         const nameBody = byName.json() as { hits: Array<{ name: string; snapshotId: string | null }> };
         expect(nameBody.hits[0]?.name).toBe('农田');
         expect(nameBody.hits[0]?.snapshotId).toBeTruthy();
+        const namedHits = byName.json().hits as Array<{ city: string; snippet: string; confirmation: string }>;
+        expect(namedHits).toHaveLength(2);
+        expect(namedHits.find((h) => h.city === '应天府')?.snippet).toContain('15');
+        expect(namedHits.find((h) => h.city === '苏州')?.snippet).toContain('12');
+        expect(namedHits.every((h) => h.confirmation === 'draft')).toBe(true);
+
+        const suzhou = await app.inject({
+          method: 'GET',
+          url: '/api/v1/knowledge/search?' + new URLSearchParams({ q: '农', city: '苏州' }),
+        });
+        const szHits = suzhou.json().hits;
+        expect(szHits).toHaveLength(1);
+        expect(szHits[0].snippet).toContain('12');
+        expect(szHits[0].snippet).not.toContain('15');
+        expect(szHits[0].confirmation).toBe('draft');
+
+        const limited = await app.inject({
+          method: 'GET',
+          url: '/api/v1/knowledge/search?' + new URLSearchParams({ q: '农', limit: '2' }),
+        });
+        expect(limited.json().hits).toHaveLength(2);
+
 
         const short = await app.inject({
           method: 'GET',

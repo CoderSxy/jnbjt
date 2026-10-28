@@ -48,6 +48,7 @@ export class ModelClient {
       throw new ModelClientError('model gateway not configured', false);
     }
 
+    signal.throwIfAborted();
     let attempt = 0;
     while (true) {
       try {
@@ -70,6 +71,7 @@ export class ModelClient {
     const timeoutMs = input.timeoutMs ?? 20_000;
     const controller = new AbortController();
     const onAbort = () => controller.abort();
+    signal.throwIfAborted();
     signal.addEventListener('abort', onAbort);
     const timer = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -83,16 +85,15 @@ export class ModelClient {
       }
       if (input.images?.length) {
         // Attach as multimodal content on last user message when vision is requested
-        const messages = input.messages.map((m) => ({ ...m }));
+        const messages: Array<{ role: string; content: unknown }> = input.messages.map((m) => ({ ...m }));
         const lastUser = [...messages].reverse().find((m) => m.role === 'user');
         if (lastUser) {
-          lastUser.content = JSON.stringify({
-            text: lastUser.content,
-            images: input.images.map(() => '[image omitted from logs]'),
-          });
+          lastUser.content = [
+            { type: 'text', text: lastUser.content },
+            ...input.images.map((url) => ({ type: 'image_url', image_url: { url } })),
+          ];
         }
         body.messages = messages;
-        body._images = input.images;
       }
 
       const res = await this.fetchImpl(`${this.baseUrl!.replace(/\/$/, '')}/chat/completions`, {
@@ -102,13 +103,7 @@ export class ModelClient {
           authorization: `Bearer ${this.apiKey}`,
           'content-type': 'application/json',
         },
-        body: JSON.stringify({
-          model: this.modelId,
-          messages: input.messages,
-          ...(input.responseFormat === 'json' || input.purpose === 'json'
-            ? { response_format: { type: 'json_object' } }
-            : {}),
-        }),
+        body: JSON.stringify(body),
       });
 
       if (res.status >= 500 || res.status === 429) {
@@ -191,13 +186,26 @@ export async function probeCapabilities(
       },
       signal,
     );
+    let vision = false;
+    let visionUnavailableReason: string | null = null;
+    try {
+      const visual = await client.requestModel({ purpose: 'vision',
+        messages: [{ role: 'user', content: 'What is the color of this image? Reply with a single English color name.' }],
+        images: ['data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAAC0lEQVQImWNgQAYAAA4AAbGa6gYAAAAASUVORK5CYII='],
+        timeoutMs: 8_000,
+      }, signal);
+      vision = /^black[.!]?$/i.test(visual.text.trim());
+      if (!vision) visionUnavailableReason = 'vision probe did not identify image color';
+    } catch {
+      visionUnavailableReason = 'vision probe unavailable';
+    }
     return {
       text: /pong/i.test(text.text),
-      vision: false, // require separate vision probe; do not claim
+      vision,
       embedding: false,
       modelId: text.modelId,
       probedAt: new Date().toISOString(),
-      unavailableReason: null,
+      unavailableReason: visionUnavailableReason,
     };
   } catch (error) {
     return {

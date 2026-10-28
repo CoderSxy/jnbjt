@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Stage, Layer, Rect, Text } from 'react-konva';
 import { BuildingPalette } from './BuildingPalette';
 import { LayoutInspector } from './LayoutInspector';
@@ -50,15 +51,58 @@ function footprint(b: Building) {
 }
 
 export function MapEditor() {
+  const [params, setParams] = useSearchParams();
+  const cityId = params.get('cityId') ?? '';
+  const [cities, setCities] = useState<Array<{ id: string; displayName: string }>>([]);
+  const [loadedCityId, setLoadedCityId] = useState<string | null>(null);
+  const [expectedVersion, setExpectedVersion] = useState<number | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [reload, setReload] = useState(0);
   const [history, setHistory] = useState(() => createHistory(initialLayout));
   const layout = history.present;
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const selected = layout.buildings.find((b) => b.id === selectedId) ?? null;
   const isNarrow = useMemo(() => window.matchMedia('(max-width: 640px)').matches, []);
+  const ready = Boolean(cityId && loadedCityId === cityId);
+  const canEdit = ready && !saving;
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch('/api/v1/cities', { credentials: 'include', signal: controller.signal })
+      .then(async (res) => {
+        if (!res.ok) throw new Error('请先登录并创建城市存档');
+        const body = await res.json();
+        setCities(body.cities);
+      })
+      .catch((error) => { if (!controller.signal.aborted) setMessage(error.message); });
+    return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    const controller = new AbortController();
+    setLoadedCityId(null);
+    setSelectedId(null);
+    setHistory(createHistory(structuredClone(initialLayout)));
+    setMessage(null);
+    if (!cityId) return;
+    fetch(`/api/v1/cities/${cityId}/layout`, { credentials: 'include', signal: controller.signal })
+      .then(async (res) => {
+        if (!res.ok) throw new Error('无法读取城市布局，请检查登录和城市权限');
+        const body = await res.json() as { layout: { version: number; layout: Layout } | null };
+        if (!active) return;
+        setHistory(createHistory(body.layout?.layout ?? structuredClone(initialLayout)));
+        setExpectedVersion(body.layout?.version ?? null);
+        setLoadedCityId(cityId);
+      })
+      .catch((error) => { if (active) setMessage(error.message); });
+    return () => { active = false; controller.abort(); };
+  }, [cityId, reload]);
+
 
   function update(next: Layout) {
-    setHistory((h) => pushHistory(h, next));
+    if (canEdit) setHistory((h) => pushHistory(h, next));
   }
 
   function addBuilding(typeName: string, w: number, h: number) {
@@ -74,31 +118,38 @@ export function MapEditor() {
   }
 
   async function save() {
+    if (!canEdit) return;
+    setSaving(true);
     setMessage(null);
-    const cities = await fetch('/api/v1/cities', { credentials: 'include' });
-    if (!cities.ok) {
-      setMessage('请先登录并创建城市存档');
-      return;
-    }
-    const list = (await cities.json()) as { cities: Array<{ id: string }> };
-    const cityId = list.cities[0]?.id;
-    if (!cityId) {
-      setMessage('没有城市存档');
-      return;
-    }
-    const current = await fetch(`/api/v1/cities/${cityId}/layout`, { credentials: 'include' });
-    const currentBody = (await current.json()) as { layout: { version: number } | null };
-    const res = await fetch(`/api/v1/cities/${cityId}/layout`, {
-      method: 'PUT',
-      credentials: 'include',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({
-        expectedVersion: currentBody.layout?.version ?? null,
-        layout,
-      }),
-    });
-    setMessage(res.ok ? '已保存' : `保存失败 ${res.status}`);
+    try {
+      const res = await fetch(`/api/v1/cities/${cityId}/layout`, {
+        method: 'PUT', credentials: 'include',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ expectedVersion, layout }),
+      });
+      if (res.status === 409) {
+        setMessage('版本冲突（409）：另一页面已保存；请先导出当前修改，再重新读取布局');
+        return;
+      }
+      if (!res.ok) throw new Error(`保存失败 ${res.status}`);
+      const body = await res.json() as { layout: { version: number } };
+      setExpectedVersion(body.layout.version);
+      setMessage('已保存');
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : '保存失败');
+    } finally { setSaving(false); }
   }
+
+  const cityPicker = (
+    <label>
+      城市存档
+      <select aria-label="城市存档" value={cityId} disabled={saving}
+        onChange={(event) => setParams(event.target.value ? { cityId: event.target.value } : {})}>
+        <option value="">请选择城市</option>
+        {cities.map((city) => <option key={city.id} value={city.id}>{city.displayName}</option>)}
+      </select>
+    </label>
+  );
 
   function exportJson() {
     const blob = new Blob([JSON.stringify(layout, null, 2)], { type: 'application/json' });
@@ -114,6 +165,9 @@ export function MapEditor() {
     return (
       <section className="panel">
         <h1>地图</h1>
+        {cityPicker}
+        {message && <p role="status">{message}</p>}
+        <p data-testid="building-count">建筑数：{ready ? layout.buildings.length : 0}</p>
         <p className="muted">手机端先提供浏览与检查；复杂编辑请用桌面。</p>
         <pre className="recipe">{JSON.stringify(layout.buildings, null, 2)}</pre>
       </section>
@@ -123,23 +177,26 @@ export function MapEditor() {
   return (
     <section className="panel editor">
       <h1>地图编辑</h1>
+      {cityPicker}
+      <p data-testid="building-count">建筑数：{ready ? layout.buildings.length : 0}</p>
       <p className="muted">整数网格；自定义底图已标记。显示坐标仅用于绘制。</p>
       <div className="editor-toolbar">
-        <button type="button" onClick={() => setHistory((h) => undo(h))}>
+        <button type="button" disabled={!canEdit || !history.past.length} onClick={() => setHistory((h) => undo(h))}>
           撤销
         </button>
-        <button type="button" onClick={() => setHistory((h) => redo(h))}>
+        <button type="button" disabled={!canEdit || !history.future.length} onClick={() => setHistory((h) => redo(h))}>
           重做
         </button>
-        <button type="button" onClick={() => void save()}>
+        <button type="button" disabled={!canEdit} onClick={() => void save()}>
           保存
         </button>
-        <button type="button" onClick={exportJson}>
+        <button type="button" disabled={!ready} onClick={exportJson}>
           导出 JSON
         </button>
+        <button type="button" disabled={!cityId || saving} onClick={() => setReload((n) => n + 1)}>重新读取布局</button>
       </div>
-      {message && <p className="muted">{message}</p>}
-      <div className="editor-grid">
+      {message && <p className="muted" role="status">{message}</p>}
+      <fieldset className="editor-grid" disabled={!canEdit}>
         <BuildingPalette
           items={[
             { typeName: '农田', w: 2, h: 1 },
@@ -172,7 +229,7 @@ export function MapEditor() {
                   height={f.h * CELL}
                   fill={selectedId === b.id ? '#2f5d50' : '#6b8f71'}
                   stroke="#1c1915"
-                  draggable={!b.locked}
+                  draggable={canEdit && !b.locked}
                   onClick={() => setSelectedId(b.id)}
                   onDragEnd={(e) => {
                     const x = Math.round(e.target.x() / CELL);
@@ -214,7 +271,7 @@ export function MapEditor() {
             });
           }}
         />
-      </div>
+      </fieldset>
     </section>
   );
 }

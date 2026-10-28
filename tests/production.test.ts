@@ -161,7 +161,7 @@ describe('calculateProduction', () => {
     const result = calculateProduction(
       baseInput({
         selectedRecipeKey: '农田|苏州|普通',
-        inventory: {},
+        inventory: { 粮食: 0 },
         targetInventory: { 粮食: 24 },
       }),
       rules,
@@ -169,4 +169,28 @@ describe('calculateProduction', () => {
     expect(result.status).toBe('ok');
     expect(result.rounds).toBe(2);
   });
+});
+
+describe('saved production conditions', () => {
+  it('selects requested output rather than experience first', () => {
+    const rules = { ...syntheticRules, recipes: [{ ...syntheticRules.recipes[0]!, outputs: [{resource: '经验', amount: 1}, {resource: '粮食', amount: 15}] }] };
+    const result = calculateProduction(baseInput({selectedRecipeKey: '农田|应天府|普通', inventory: {粮食: 0}, targetInventory: {粮食: 30}}), rules);
+    expect(result.rounds).toBe(2);
+    expect(result.gaps).toEqual({粮食: 30});
+  });
+  it('does not invent missing inventory or building count', () => {
+    for (const partial of [{inventory: {}}, {inventory: {粮食: 0}, buildingCount: 0}, {inventory: {粮食: 0}, availableWorkers: NaN}]) {
+      const result = calculateProduction(baseInput({selectedRecipeKey: '农田|应天府|普通', ...partial}), syntheticRules);
+      expect(result.status).toBe('need_more_data');
+      expect(result.rounds).toBeNull();
+    }
+  });
+});
+
+it('refuses invalid or unsafe total targets', () => {
+  for (const amount of [-1, Number.MAX_SAFE_INTEGER + 1, NaN, 1.5]) {
+    const result = calculateProduction(baseInput({selectedRecipeKey:'农田|应天府|普通',inventory:{粮食:0},targetInventory:{粮食:amount}}), syntheticRules);
+    expect(result.status).toBe('need_more_data');
+    expect(result.rounds).toBeNull();
+  }
 });

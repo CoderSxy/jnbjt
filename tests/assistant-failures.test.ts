@@ -26,3 +26,18 @@ describe('assistant failures', () => {
     expect(answer.citations).toEqual([]);
   });
 });
+
+it('refuses invented production target and city', async () => {
+  const pool = {query: async () => ({ rows: [], rowCount: 0 })} as unknown as Pool;
+  for (const question of ['粮食生产还缺几轮？', '粮食生产到30，每天上线4次']) {
+    const answer = await answerQuestion({question}, {pool, userId: 'u'}, new AbortController().signal);
+    expect(answer.calculations).toEqual([]);
+    expect(answer.missing.join(' ')).toMatch(/city|城市/);
+  }
+});
+
+it('recognizes explicit target even without the word production', async () => {
+  const pool = {query: async () => ({rows: [], rowCount: 0})} as unknown as Pool;
+  const answer = await answerQuestion({question:'粮食到10000，每天上线4次'}, {pool,userId:'u'}, new AbortController().signal);
+  expect(answer.missing.join(' ')).toMatch(/cityId/);
+});

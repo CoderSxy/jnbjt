@@ -19,13 +19,18 @@ npm run dev:web
 
 可选模型：`MODEL_BASE_URL` / `MODEL_API_KEY` / `MODEL_ID`（不配置时资料/计算/存档仍可用）。
 
-## 进度
+## 验证与当前范围
 
-- [x] 任务 1–3：探针、知识、登录存档、生产计算
-- [x] 任务 4：长任务与模型适配
-- [x] 任务 5：地图编辑与布局校验
-- [x] 任务 6：带来源 AI 助手
-- [x] 任务 7：截图草稿与局部布局建议
-- [ ] 任务 8：生产 ECS/Nginx 切换（文档与 health 已具备）
+```bash
+npm test
+npm run build
+npm run test:e2e
+```
 
-详见 `docs/acceptance.md`。
+`test:e2e` 使用 Playwright；本机 macOS 已安装 Chrome 时会直接使用。其他环境先执行 `npx playwright install chromium`，也可设置 `PLAYWRIGHT_CHANNEL=chrome`。
+
+地图按城市加载并保留版本冲突保护。生产计算只使用有来源、已人工审核的配方；导入知识版本不会自动审核配方。助手计算需明确目标总库存和上线次数，例如“粮食到10000，每天上线4次”。
+
+截图通过异步任务生成待确认草稿；未配置模型时明确提示手动校正。更新后需执行 `npm run db:migrate`（新增迁移 006）。
+
+本地回归、已实现功能和未完成的实时/生产验收见 [验收记录](docs/acceptance.md)。

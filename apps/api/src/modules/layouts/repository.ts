@@ -30,14 +30,17 @@ export async function saveLayout(
 ): Promise<{ id: string; version: number; layout: Layout }> {
   const existing = await getLayout(pool, userId, cityId);
   if (!existing) {
+    if (expectedVersion !== null) throw new VersionConflictError();
     const id = randomUUID();
     const inserted = await pool.query<{ id: string; version: number; layout: Layout }>(
       `INSERT INTO layouts (id, user_id, city_id, version, layout)
        VALUES ($1,$2,$3,1,$4::jsonb)
+       ON CONFLICT (user_id, city_id) DO NOTHING
        RETURNING id, version, layout`,
       [id, userId, cityId, JSON.stringify(layout)],
     );
-    return inserted.rows[0]!;
+    if (!inserted.rows[0]) throw new VersionConflictError();
+    return inserted.rows[0];
   }
 
   if (expectedVersion == null || existing.version !== expectedVersion) {

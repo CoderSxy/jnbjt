@@ -77,7 +77,8 @@ describe('assistant grounding', () => {
         if (item.tag === 'forged_citation') refusedForge += 1;
         if (answer.citations.length > 0) citationOk += 1;
         if (item.tag === 'calc') {
-          expect(answer.calculations.length).toBeGreaterThan(0);
+          expect(answer.calculations).toEqual([]);
+          expect(answer.missing.length).toBeGreaterThan(0);
         }
         if (item.tag === 'unsupported_layout') {
           expect(answer.unsupported.length).toBeGreaterThan(0);

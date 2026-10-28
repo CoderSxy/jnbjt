@@ -3,12 +3,11 @@ import type { FastifyInstance } from 'fastify';
 import { assertCsrf, requireUser } from '../../plugins/auth.js';
 import { storeUpload, validateImageBuffer } from '../../plugins/uploads.js';
 import { VersionConflictError } from '../cities/repository.js';
-import { enqueueJob } from '../jobs/repository.js';
+import { enqueueJob, QueueLimitError } from '../jobs/repository.js';
 import { applyRecognition } from './apply.js';
-import { recognizeScreenshot } from './recognize.js';
 
 export async function registerImportRoutes(app: FastifyInstance): Promise<void> {
-  app.post('/api/v1/uploads', async (request, reply) => {
+  app.post('/api/v1/uploads', { bodyLimit: 14 * 1024 * 1024 }, async (request, reply) => {
     const user = requireUser(request, reply);
     if (!user) return;
     if (!assertCsrf(request, reply)) return;
@@ -28,7 +27,7 @@ export async function registerImportRoutes(app: FastifyInstance): Promise<void> 
     let image;
     try {
       const buf = Buffer.from(body.dataBase64, 'base64');
-      image = validateImageBuffer(buf, body.mime ?? body.filename);
+      image = await validateImageBuffer(buf, body.mime ?? body.filename);
     } catch (error) {
       const code = (error as { code?: string }).code ?? 'BAD_IMAGE';
       return reply.code(400).send({
@@ -92,20 +91,36 @@ export async function registerImportRoutes(app: FastifyInstance): Promise<void> 
     if (!body.uploadId || !body.key) {
       return reply.code(400).send({ error: { code: 'BAD_REQUEST', message: 'uploadId and key required' } });
     }
-    // Create draft synchronously for MVP; also enqueue job for async tracking
-    const draft = await recognizeScreenshot(
-      app.db,
-      user.id,
-      body.uploadId,
-      { ...(body.cityId ? { cityId: body.cityId } : {}) },
-      new AbortController().signal,
-    );
-    const job = await enqueueJob(app.db, user.id, body.key, {
-      kind: 'recognition',
-      uploadId: body.uploadId,
-      ...(body.cityId ? { cityId: body.cityId } : {}),
-    });
-    return reply.code(202).send({ job, draft });
+    const upload = await app.db.query('SELECT id FROM uploads WHERE id=$1 AND user_id=$2', [body.uploadId, user.id]);
+    if (!upload.rows[0]) return reply.code(404).send({ error: { code: 'NOT_FOUND', message: 'upload not found' } });
+    if (body.cityId) {
+      const city = await app.db.query('SELECT id FROM player_cities WHERE id=$1 AND user_id=$2', [body.cityId, user.id]);
+      if (!city.rows[0]) return reply.code(404).send({ error: { code: 'NOT_FOUND', message: 'city not found' } });
+    }
+    try {
+      const job = await enqueueJob(app.db, user.id, body.key, {
+        kind: 'recognition',
+        uploadId: body.uploadId,
+        ...(body.cityId ? { cityId: body.cityId } : {}),
+      });
+      return reply.code(202).send({ job });
+    } catch (error) {
+      if (error instanceof QueueLimitError) {
+        return reply.code(429).send({ error: { code: 'QUEUE_LIMIT', message: error.message } });
+      }
+      throw error;
+    }
+  });
+
+  app.get('/api/v1/recognition-drafts/:id', async (request, reply) => {
+    const user = requireUser(request, reply);
+    if (!user) return;
+    const { id } = request.params as { id: string };
+    const result = await app.db.query('SELECT id, upload_id AS "uploadId", city_id AS "cityId", fields, status FROM recognition_drafts WHERE id=$1 AND user_id=$2', [id, user.id]);
+    if (!result.rows[0]) return reply.code(404).send({ error: { code: 'NOT_FOUND', message: 'draft not found' } });
+    const draft = result.rows[0];
+    const city = draft.cityId ? await app.db.query('SELECT id, display_name AS "displayName", version, state FROM player_cities WHERE id=$1 AND user_id=$2', [draft.cityId, user.id]) : null;
+    return { draft, city: city?.rows[0] ?? null };
   });
 
   app.post('/api/v1/recognition-drafts/:id/apply', async (request, reply) => {
