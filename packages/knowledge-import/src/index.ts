@@ -8,6 +8,18 @@ export { normalizeBuildingDraft, assertNoZeroFilledUnknowns } from './normalize.
 export { buildKnowledgeBundle, PARSER_VERSION } from './bundle.js';
 export { importKnowledgeBundle } from './import-bundle.js';
 export type { ImportReport } from './import-bundle.js';
+export {
+  WIKI_SNAPSHOT_BUNDLE_FORMAT_VERSION,
+  buildKnowledgeBundleFromWikiSnapshotDir,
+  loadWikiFixtures,
+  loadWikiSnapshotBundle,
+} from './wiki-snapshot-bundle.js';
+export type {
+  WikiSnapshotBundleLoadResult,
+  WikiSnapshotBundleValidation,
+  WikiSnapshotManifest,
+  WikiSnapshotPageMeta,
+} from './wiki-snapshot-bundle.js';
 export type {
   FieldCoverage,
   ProbeConfig,

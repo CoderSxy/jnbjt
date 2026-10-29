@@ -14,6 +14,19 @@ export const CityState = Type.Object({
   ),
   workersAvailable: Type.Integer({ minimum: 0 }),
   notes: Type.Optional(Type.String()),
+  /** 用户确认后的生产规划（助手草稿应用写入；非自动推算库存） */
+  productionPlan: Type.Optional(
+    Type.Object({
+      sourceDraftId: Type.String(),
+      recipeId: Type.String(),
+      recipeLabel: Type.String(),
+      targetInventory: Type.Record(Type.String(), Type.Integer({ minimum: 0 })),
+      onlineFrequencyPerDay: Type.Number({ exclusiveMinimum: 0 }),
+      rounds: Type.Union([Type.Integer({ minimum: 0 }), Type.Null()]),
+      gaps: Type.Record(Type.String(), Type.Integer()),
+      recordedAt: Type.String(),
+    }),
+  ),
 });
 
 export const CitySnapshot = Type.Object({

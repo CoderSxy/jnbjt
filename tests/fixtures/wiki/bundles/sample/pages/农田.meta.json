@@ -1,0 +1,9 @@
+{
+  "title": "农田",
+  "pageId": 1201,
+  "revision": 64284,
+  "fetchedAt": "2026-10-24T08:00:00.000Z",
+  "sourceUrl": "https://wiki.biligame.com/jiangnan/api.php?action=parse&page=农田",
+  "fixtureKind": "structure_faithful",
+  "notes": "Live re-fetch returned HTTP 567 after probe burst; HTML encodes observed patterns (city branches, tiers, 15+60, rowspan) for parser tests. Replace when live snapshots available."
+}

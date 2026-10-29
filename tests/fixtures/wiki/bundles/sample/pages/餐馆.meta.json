@@ -1,0 +1,9 @@
+{
+  "title": "餐馆",
+  "pageId": 1301,
+  "revision": 60732,
+  "fetchedAt": "2026-10-24T08:00:00.000Z",
+  "sourceUrl": "https://wiki.biligame.com/jiangnan/api.php?action=parse&page=餐馆",
+  "fixtureKind": "structure_faithful",
+  "notes": "Same-name building across cities; image units; unknown values stay unknown."
+}

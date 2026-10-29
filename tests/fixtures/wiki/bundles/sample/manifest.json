@@ -1,0 +1,13 @@
+{
+  "formatVersion": "1",
+  "bundleKind": "wiki-snapshot",
+  "producedAt": "2026-10-24T08:00:00.000Z",
+  "producer": "jnbjt-fixture",
+  "origin": "https://wiki.biligame.com",
+  "wikiPath": "/jiangnan",
+  "license": "CC BY-NC-SA 3.0",
+  "pages": [
+    { "title": "农田", "baseName": "农田" },
+    { "title": "餐馆", "baseName": "餐馆" }
+  ]
+}
