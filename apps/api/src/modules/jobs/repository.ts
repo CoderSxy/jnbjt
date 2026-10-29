@@ -132,6 +132,10 @@ export async function cancelJob(
         `DELETE FROM recognition_drafts WHERE job_id = $1 AND user_id = $2 AND status = 'pending_review'`,
         [jobId, userId],
       );
+      await client.query(
+        `DELETE FROM plan_drafts WHERE job_id = $1 AND user_id = $2 AND status = 'pending_review'`,
+        [jobId, userId],
+      );
     }
     await client.query('COMMIT');
     return result.rows[0] ? mapJob(result.rows[0]) : null;

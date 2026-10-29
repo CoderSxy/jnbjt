@@ -87,7 +87,7 @@ describe('assistant grounding', () => {
           expect(answer.suggestions.join(' ')).not.toMatch(/删除数据库/);
         }
         if (item.tag === 'diff_only') {
-          expect(answer.suggestions.join(' ')).toMatch(/不直接写回|差异|建议/);
+          expect(answer.suggestions.join(' ')).toMatch(/未写存档|差异|建议/);
         }
       }
 
