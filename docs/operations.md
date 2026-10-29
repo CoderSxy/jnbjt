@@ -10,7 +10,14 @@
 cp .env.example .env
 npm install
 npm run db:migrate
-npm run import:bundle -- --fixture tests/fixtures/wiki/pages/农田 --fixture tests/fixtures/wiki/pages/餐馆 --publish
+## 知识导入
+
+Wiki 外部数据包格式与 CLI 说明见 [wiki-import-bundle.md](wiki-import-bundle.md)。
+
+```bash
+npm run import:bundle -- --bundle tests/fixtures/wiki/bundles/sample --publish
+# 或：npm run import:bundle -- --fixture tests/fixtures/wiki/pages/农田 --fixture tests/fixtures/wiki/pages/餐馆 --publish
+```
 npm run create-user -- <user> <password> admin
 npm run dev:api    # 127.0.0.1:3100
 npm run dev:web    # 5173，代理 /api
