@@ -4,6 +4,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import pg from 'pg';
 import { hashPassword } from '../apps/api/src/plugins/auth.js';
+import { validatePasswordPolicy } from '../apps/api/src/modules/auth/password-policy.js';
 
 function loadEnv(): void {
   const path = resolve(process.cwd(), '.env');
@@ -23,6 +24,8 @@ async function main(): Promise<void> {
   if (!username || !password) {
     throw new Error('Usage: npm run create-user -- <username> <password> [admin]');
   }
+  const policy = validatePasswordPolicy(username, password);
+  if (!policy.ok) throw new Error(policy.message);
   const databaseUrl = process.env.DATABASE_URL;
   if (!databaseUrl) throw new Error('DATABASE_URL required');
 
@@ -30,7 +33,7 @@ async function main(): Promise<void> {
   try {
     const id = randomUUID();
     await pool.query(
-      `INSERT INTO users (id, username, password_hash, role) VALUES ($1, $2, $3, $4)`,
+      `INSERT INTO users (id, username, password_hash, role, status) VALUES ($1, $2, $3, $4, 'active')`,
       [id, username, hashPassword(password), role],
     );
     console.log(JSON.stringify({ id, username, role }, null, 2));

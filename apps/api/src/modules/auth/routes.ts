@@ -4,11 +4,16 @@ import {
   createSession,
   destroySession,
   requireUser,
-  verifyPassword,
 } from '../../plugins/auth.js';
 import { sendSmsVerificationCode, verifySmsAndLogin } from './sms-service.js';
 import { SmsNotConfiguredError } from './sms/types.js';
 import { maskPhone } from './phone.js';
+import {
+  bindPhoneForUser,
+  loginWithPassword,
+  registerWithPassword,
+  setUserPassword,
+} from './password-auth.js';
 
 function publicUser(user: {
   id: string;
@@ -27,43 +32,105 @@ function publicUser(user: {
 }
 
 export async function registerAuthRoutes(app: FastifyInstance): Promise<void> {
+  app.post('/api/v1/auth/register', async (request, reply) => {
+    if (!assertCsrf(request, reply)) return;
+    const body = request.body as { username?: string; password?: string; displayName?: string };
+    if (!body.username || !body.password) {
+      return reply.code(400).send({ error: { code: 'BAD_REQUEST', message: 'username/password required' } });
+    }
+    try {
+      const user = await registerWithPassword(
+        app.db,
+        body.username,
+        body.password,
+        body.displayName,
+      );
+      await createSession(app, reply, user.id);
+      return { user: publicUser({ ...user, phone: null }), isNewUser: true };
+    } catch (error) {
+      const code = (error as { code?: string }).code;
+      if (code === 'BAD_REQUEST') {
+        return reply.code(400).send({ error: { code, message: (error as Error).message } });
+      }
+      if (code === 'CONFLICT') {
+        return reply.code(409).send({ error: { code, message: '用户名已被占用' } });
+      }
+      throw error;
+    }
+  });
+
   app.post('/api/v1/auth/login', async (request, reply) => {
     if (!assertCsrf(request, reply)) return;
     const body = request.body as { username?: string; password?: string };
     if (!body.username || !body.password) {
       return reply.code(400).send({ error: { code: 'BAD_REQUEST', message: 'username/password required' } });
     }
-    const result = await app.db.query<{
-      id: string;
-      username: string;
-      role: string;
-      password_hash: string | null;
-      status: string;
-      phone: string | null;
-      display_name: string | null;
-    }>(
-      `SELECT id, username, role, password_hash, status, phone, display_name FROM users WHERE username = $1`,
-      [body.username],
-    );
-    const user = result.rows[0];
-    if (
-      !user ||
-      user.status !== 'active' ||
-      !user.password_hash ||
-      !verifyPassword(body.password, user.password_hash)
-    ) {
-      return reply.code(401).send({ error: { code: 'INVALID_CREDENTIALS', message: 'invalid credentials' } });
+    try {
+      const result = await loginWithPassword(app.db, app, reply, request, body.username, body.password);
+      return result;
+    } catch (error) {
+      const code = (error as { code?: string }).code;
+      if (code === 'RATE_LIMIT') {
+        return reply.code(429).send({
+          error: {
+            code,
+            message: '登录尝试过多，请稍后再试',
+            retryAfterSeconds: (error as { retryAfterSeconds?: number }).retryAfterSeconds,
+          },
+        });
+      }
+      if (code === 'INVALID_CREDENTIALS') {
+        return reply.code(401).send({ error: { code, message: '用户名或密码错误' } });
+      }
+      throw error;
     }
-    await createSession(app, reply, user.id);
-    return {
-      user: publicUser({
-        id: user.id,
-        username: user.username,
-        role: user.role,
-        phone: user.phone,
-        displayName: user.display_name,
-      }),
-    };
+  });
+
+  app.post('/api/v1/auth/set-password', async (request, reply) => {
+    const user = requireUser(request, reply);
+    if (!user || !assertCsrf(request, reply)) return;
+    const body = request.body as { password?: string; currentPassword?: string };
+    if (!body.password) {
+      return reply.code(400).send({ error: { code: 'BAD_REQUEST', message: 'password required' } });
+    }
+    try {
+      await setUserPassword(app.db, user.id, body.password, body.currentPassword);
+      return { ok: true };
+    } catch (error) {
+      const code = (error as { code?: string }).code;
+      if (code === 'BAD_REQUEST') {
+        return reply.code(400).send({ error: { code, message: (error as Error).message } });
+      }
+      if (code === 'INVALID_CREDENTIALS') {
+        return reply.code(401).send({ error: { code, message: '当前密码不正确' } });
+      }
+      throw error;
+    }
+  });
+
+  app.post('/api/v1/auth/bind-phone', async (request, reply) => {
+    const user = requireUser(request, reply);
+    if (!user || !assertCsrf(request, reply)) return;
+    const body = request.body as { phone?: string; code?: string };
+    if (!body.phone || !body.code) {
+      return reply.code(400).send({ error: { code: 'BAD_REQUEST', message: 'phone and code required' } });
+    }
+    try {
+      const result = await bindPhoneForUser(app.db, user.id, body.phone, body.code);
+      return result;
+    } catch (error) {
+      const code = (error as { code?: string }).code;
+      if (code === 'BAD_REQUEST') {
+        return reply.code(400).send({ error: { code, message: '手机号或验证码无效' } });
+      }
+      if (code === 'INVALID_CODE') {
+        return reply.code(401).send({ error: { code, message: '验证码错误或已失效' } });
+      }
+      if (code === 'CONFLICT') {
+        return reply.code(409).send({ error: { code, message: (error as Error).message } });
+      }
+      throw error;
+    }
   });
 
   app.post('/api/v1/auth/sms/send-code', async (request, reply) => {

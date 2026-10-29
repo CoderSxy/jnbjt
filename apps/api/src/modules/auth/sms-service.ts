@@ -95,17 +95,11 @@ export async function sendSmsVerificationCode(
   return result;
 }
 
-export async function verifySmsAndLogin(
+export async function verifyAndConsumeSmsCode(
   pool: Pool,
-  app: FastifyInstance,
-  reply: FastifyReply,
   phoneRaw: string,
   codeRaw: string,
-  displayName?: string,
-): Promise<{
-  user: { id: string; username: string; role: string; phone: string; displayName: string | null };
-  isNewUser: boolean;
-}> {
+): Promise<string> {
   const phone = normalizePhone(phoneRaw);
   if (!phone) {
     throw Object.assign(new Error('invalid phone'), { code: 'BAD_REQUEST' });
@@ -118,12 +112,10 @@ export async function verifySmsAndLogin(
   const row = await pool.query<{
     id: string;
     code_hash: string;
-    expires_at: string;
     attempts: number;
     max_attempts: number;
-    consumed_at: string | null;
   }>(
-    `SELECT id, code_hash, expires_at, attempts, max_attempts, consumed_at
+    `SELECT id, code_hash, attempts, max_attempts
      FROM sms_verification_codes
      WHERE phone = $1 AND consumed_at IS NULL AND expires_at > now()
      ORDER BY created_at DESC LIMIT 1`,
@@ -144,10 +136,24 @@ export async function verifySmsAndLogin(
   if (!valid) {
     throw Object.assign(new Error('invalid code'), { code: 'INVALID_CODE' });
   }
-
   await pool.query(`UPDATE sms_verification_codes SET consumed_at = now() WHERE id = $1`, [
     record.id,
   ]);
+  return phone;
+}
+
+export async function verifySmsAndLogin(
+  pool: Pool,
+  app: FastifyInstance,
+  reply: FastifyReply,
+  phoneRaw: string,
+  codeRaw: string,
+  displayName?: string,
+): Promise<{
+  user: { id: string; username: string; role: string; phone: string; displayName: string | null };
+  isNewUser: boolean;
+}> {
+  const phone = await verifyAndConsumeSmsCode(pool, phoneRaw, codeRaw);
 
   const existing = await pool.query<{
     id: string;

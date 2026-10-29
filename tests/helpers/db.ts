@@ -66,6 +66,7 @@ async function truncateIfExists(pool: pg.Pool, tables: string[]): Promise<void> 
 
 export async function resetPlayerTables(pool: pg.Pool): Promise<void> {
   await truncateIfExists(pool, [
+    'auth_login_failures',
     'sms_verification_codes',
     'recognition_drafts',
     'uploads',
