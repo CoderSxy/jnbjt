@@ -12,6 +12,7 @@ npm run import:bundle -- --bundle tests/fixtures/wiki/bundles/sample --publish
 # 或单页夹具：npm run import:bundle -- --fixture tests/fixtures/wiki/pages/农田 --fixture tests/fixtures/wiki/pages/餐馆 --publish
 npm run review:recipes -- --manifest tests/fixtures/production/yingtian-review-manifest.json
 npm run create-user -- <user> <password> admin
+# 或使用 Web 手机号/用户名登录，见 docs/auth.md
 npm test
 npm run typecheck
 npm run build -w @jnbjt/web

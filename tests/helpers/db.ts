@@ -12,6 +12,11 @@ function loadEnv(): void {
   }
 }
 
+export function hasTestDatabase(): boolean {
+  loadEnv();
+  return Boolean(process.env.TEST_DATABASE_URL);
+}
+
 export function testDatabaseUrl(): string {
   loadEnv();
   const url = process.env.TEST_DATABASE_URL ?? process.env.DATABASE_URL;
@@ -61,6 +66,8 @@ async function truncateIfExists(pool: pg.Pool, tables: string[]): Promise<void> 
 
 export async function resetPlayerTables(pool: pg.Pool): Promise<void> {
   await truncateIfExists(pool, [
+    'auth_login_failures',
+    'sms_verification_codes',
     'plan_drafts',
     'recognition_drafts',
     'uploads',

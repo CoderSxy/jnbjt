@@ -20,7 +20,7 @@
 
 ## 启动 / 更新
 
-安装依赖后运行 `npm run db:migrate`，包含 `006_recognition_jobs.sql` 与 `007_plan_drafts.sql`（助手计划草稿）。本轮只对测试库执行迁移，未修改实际玩家数据库或部署生产。
+安装依赖后运行 `npm run db:migrate`，包含 `006`–`009`（识别 job、计划草稿 `007`、短信 `008`、登录限速 `009`）。本轮只对测试库执行迁移，未修改实际玩家数据库或部署生产。
 
 生产配方需要人工审核为 reviewed/published；`import:bundle --publish` 仅发布知识版本，配方仍为 draft。本轮不把快照夹具或模型结果自行标记为已核验游戏事实。
 
