@@ -10,6 +10,11 @@
 cp .env.example .env
 npm install
 npm run db:migrate
+npm run create-user -- <user> <password> admin
+npm run dev:api    # 127.0.0.1:3100
+npm run dev:web    # 5173，代理 /api
+```
+
 ## 知识导入
 
 Wiki 外部数据包格式与 CLI 说明见 [wiki-import-bundle.md](wiki-import-bundle.md)。
@@ -17,10 +22,7 @@ Wiki 外部数据包格式与 CLI 说明见 [wiki-import-bundle.md](wiki-import-
 ```bash
 npm run import:bundle -- --bundle tests/fixtures/wiki/bundles/sample --publish
 # 或：npm run import:bundle -- --fixture tests/fixtures/wiki/pages/农田 --fixture tests/fixtures/wiki/pages/餐馆 --publish
-```
-npm run create-user -- <user> <password> admin
-npm run dev:api    # 127.0.0.1:3100
-npm run dev:web    # 5173，代理 /api
+npm run review:recipes -- --manifest tests/fixtures/production/yingtian-review-manifest.json
 ```
 
 ## 健康检查
@@ -35,4 +37,4 @@ npm run dev:web    # 5173，代理 /api
 - Cookie 省略 Domain；生产设 `COOKIE_SECURE=true`。
 - 本地已实现长任务/AI/截图链路；生产尚未部署。更新先运行迁移（含 006），长任务全局并发 1、每用户活动任务上限 10。
 - 截图解码使用 sharp，生产安装需要匹配服务器平台的原生依赖；Linux/amd64 发布包仍需实际验收。
-- 生产计算仅允许 active 且人工审核（reviewed/published）、具有来源快照的配方；新导入的 draft 不可直接计算。
+- 生产计算仅允许 active 且人工审核（reviewed/published）、具有来源快照且数值完整的配方；审核 CLI/API 见 [production-recipe-review.md](production-recipe-review.md)。

@@ -76,6 +76,16 @@ export function requireUser(request: FastifyRequest, reply: FastifyReply): AuthU
   return request.user;
 }
 
+export function requireAdmin(request: FastifyRequest, reply: FastifyReply): AuthUser | null {
+  const user = requireUser(request, reply);
+  if (!user) return null;
+  if (user.role !== 'admin') {
+    reply.code(403).send({ error: { code: 'FORBIDDEN', message: 'admin required' } });
+    return null;
+  }
+  return user;
+}
+
 export function assertCsrf(request: FastifyRequest, reply: FastifyReply): boolean {
   const method = request.method.toUpperCase();
   if (method === 'GET' || method === 'HEAD' || method === 'OPTIONS') return true;
